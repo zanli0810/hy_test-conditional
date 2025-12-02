@@ -1,0 +1,101 @@
+\documentclass[12pt,hidelinks]{article}
+\input{config.tex}
+
+% % --------------------------------------------------------
+
+\begin{document}
+\title{Hypothesis test of conditional subsampling}
+% \author{HaiYing Wang\\
+%   Department of Statistics, University of Connecticut}
+\maketitle
+% \begin{abstract}
+% \end{abstract}
+
+\begin{section}{Hypothesis Test}
+
+We note that that the score function of IPW is
+\begin{eqnarray}\label{eq:score_W}
+    \psi_W (\htheta; \x, y, \delta) = \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \log f(y\mid \x,\btheta),
+\end{eqnarray}
+and 
+$$\sum_{i=1}^{N} \psi_W (\htheta_W; \x_i, y_i, \delta_i) = 0,$$ 
+where $\htheta_W$ is the IPW estimator.
+Samewise, the score function of MSCLE is 
+\begin{eqnarray}\label{eq:score_S}
+    \psi_S (\htheta; \x, y, \delta) = \delta [\nabla_{\btheta} \log f(y\mid \x,\btheta) - \nabla_{\btheta} \log \bapi(\x, y)],
+\end{eqnarray}
+and 
+$$\sum_{i=1}^{N} \psi_S (\htheta_S; \x_i, y_i, \delta_i) = 0,$$
+ where $\htheta_S$ is the MSECLE and $\bapi(\x, y) = \int f(y \mid \x,\btheta) \pi(\x, y)$.
+
+As it is mentioned by \citep{wang2022maximum}, the IPW estimator $\hbeta_W$ is consistent, because the conditional expectation of the selection indicator $\delta$ give the data equals the inclusion probability and therefore the expectation of the objective function for the IPW estimator is the same as that of the full data MLE. 
+Yet, the MSCLE is estimated by the assumed model structure to derive the subsampled conditional likelihood, 
+so if the subsampling probabilities also depend on the data then the MSCLE is not consistent to the same limit as the full data MLE when the assumed model structure is misspecified. 
+That brings a thought that the distance between IPW estimator and MSCLE can be used as an indicator of model misspecification since this distance vanishes asymptotically in the absence of misspecification, but generally doesn't vanish otherwise.
+We consider the Hausman-type test \citep{hausman1978specification, white1982maximum} to intruduce the following test statistic. 
+The misspecification indicator is $\htheta_W - \htheta_S$, so we investigate the asymptotic distribution of $\sqrt{N} (\htheta_W - \htheta_S)$. 
+We anticipate that with appropriate regularity conditions, $\sqrt{N} (\htheta_W - \htheta_S)$ will be normally distributed asymptotically with mean zero in the absence of misspecification. 
+Given a consistent estimator for the asymptotic covariance matrix, we can form an asymptotic chi-square statistic. 
+\begin{assumption}
+    \begin{itemize}
+        \item[(1)] $\Sigma_W^{-1} - \Sigma_S^{-1}$ is a semi-positive definite matrix.
+    \end{itemize}
+\end{assumption}
+
+\begin{lemma}\label{le:test stat}
+    Under the absence of model misspecification, the test statistic
+    $$H_N = N (\htheta_W - \htheta_S) \hV_H^{-1} (\htheta_W - \htheta_S)^\top \sim \chi^2_{p},$$
+\end{lemma}
+where $p$ is the parameter dimension and $\hV_H$ is the covariate matrix of $\sqrt{N}(\htheta_W - \htheta_S)$ and $\hV = \Sigma_W^{-1} - \Sigma_S^{-1}$. $\Sigma_W$ and $\Sigma_S$ are the inverse of asymptotic matrixs of IPW estimator and MSCLE respectively.
+
+\begin{proof}
+We first have 
+$$\hV_H = var(\sqrt{N} (\htheta_W - \htheta_S)) = \Sigma_W^{-1} + \Sigma_S^{-1} - 2N cov(\htheta_W, \htheta_S).$$
+
+Then we just need to calculate $cov(\htheta_W, \htheta_S)$.
+
+
+For Eqs. \eqref{eq:score_W, eq:score_S}, we expense them at the true value $\btheta_0$, then we have
+\begin{eqnarray}
+    0 &=& \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_W (\btheta_0; \x_i, y_i, \delta_i) + [\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i)] \sqrt{N} (\htheta_W - \htheta_0) + \op, \\
+    0 &=& \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_S (\btheta_0; \x_i, y_i, \delta_i) + [\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i)] \sqrt{N} (\htheta_S - \htheta_0) + \op. 
+\end{eqnarray}
+Assume that $A_W = \Exp [- \nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)]$ and $A_S = \Exp [- \nabla_{\btheta} \psi_S (\btheta_0; \x, y, \delta)]$, with the large law of number, we have 
+$$\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i) \cvp -A_W,$$
+and 
+$$\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i) \cvp -A_S.$$
+Let $B_{WS} = \Exp [\psi_W (\btheta_0; \x, y, \delta) \psi_S (\btheta_0; \x, y, \delta)^\top]$, we have
+\begin{eqnarray}
+    \nonumber
+    B_{WS} &=& \Exp \left[ \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \left( \nabla_{\btheta} \log f(y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \\ 
+    &=& \Exp_{(\x,y)} \left[ \Exp  \left[ \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \left( \nabla_{\btheta} \log f(y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \mid (\x,y)\right]. 
+\end{eqnarray}
+Since $\Exp[\delta \mid \x,y] = \pi(\x,y)$,
+\begin{eqnarray}
+    \nonumber
+    B_{WS} &=& \Exp_{(\x,y)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \left( \nabla_{\btheta} \log f(y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \\ \nonumber
+    &=& \I(\btheta_0) - \Exp_{(\x,y)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \nabla_{\btheta} \log \bapi(\x, y)^\top \right] \\ \nonumber
+    &=& \I(\btheta_0) - \Exp_{(y)} \left[ \Exp_{(\x)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \right] \nabla_{\btheta} \log \bapi(\x, y)^\top  \right] \\
+    &=& \I(\btheta_0),
+\end{eqnarray}
+where $\I(\btheta_0)$ is the Fisher information matrix of $\btheta_0$ and $\Exp_{(\x)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \right]=0$.
+
+Besides, 
+$$A_W = \Exp [- \nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)] = \Exp_{(\x,y)} \left[- \nabla_{\btheta}^2 \ell_W (\btheta_0; \x, y, \delta) \right] = \I(\btheta_0),$$
+while
+$$A_S  = \Exp [-\nabla_{\btheta}^2 \ell_S(\btheta_0; \x, y, \delta)] = \Sigma_S,$$
+with the conclusion in \citep{wang2022maximum} (A.12) that $-\frac{1}{N} \nabla_{\btheta}^2 \ell_S(\btheta_0; \x, y, \delta) = \Sigma_S + \op$.
+
+Thus we have
+$cov(\sqrt{N} \htheta_W, \sqrt{N} \htheta_S) = A_W^{-1} B_{WS} A_S^{-1 \top} = \Sigma_S^{-1}$ and $\hV_H = \Sigma_W^{-1}-\Sigma_S^{-1}$.
+
+\end{proof}
+
+\end{section}
+
+
+\bibliographystyle{agsm}
+\bibliography{ref}
+
+
+\end{document}
