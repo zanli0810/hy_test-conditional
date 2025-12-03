@@ -14,10 +14,12 @@
 \begin{section}{Hypothesis Test}
 
 We note that that the score function of IPW is
+\why{Use align instead of eqnarray.}
 \begin{eqnarray}\label{eq:score_W}
     \psi_W (\htheta; \x, y, \delta) = \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \log f(y\mid \x,\btheta),
 \end{eqnarray}
 and 
+\why{Use align or equation instead of \$\$.}
 $$\sum_{i=1}^{N} \psi_W (\htheta_W; \x_i, y_i, \delta_i) = 0,$$ 
 where $\htheta_W$ is the IPW estimator.
 Samewise, the score function of MSCLE is 
@@ -27,8 +29,12 @@ Samewise, the score function of MSCLE is
 and 
 $$\sum_{i=1}^{N} \psi_S (\htheta_S; \x_i, y_i, \delta_i) = 0,$$
  where $\htheta_S$ is the MSECLE and $\bapi(\x, y) = \int f(y \mid \x,\btheta) \pi(\x, y)$.
-
-As it is mentioned by \citep{wang2022maximum}, the IPW estimator $\hbeta_W$ is consistent, because the conditional expectation of the selection indicator $\delta$ give the data equals the inclusion probability and therefore the expectation of the objective function for the IPW estimator is the same as that of the full data MLE. 
+As it is mentioned by \why{it should be ``cite'' instead of ``citep'' here
+  (similar problem in other places):} \citep{wang2022maximum}, the IPW estimator $\hbeta_W$ is
+consistent, because the conditional expectation of the selection indicator
+$\delta$ give the data equals the inclusion probability and therefore the
+expectation of the objective function for the IPW estimator is the same as that
+of the full data MLE.
 Yet, the MSCLE is estimated by the assumed model structure to derive the subsampled conditional likelihood, 
 so if the subsampling probabilities also depend on the data then the MSCLE is not consistent to the same limit as the full data MLE when the assumed model structure is misspecified. 
 That brings a thought that the distance between IPW estimator and MSCLE can be used as an indicator of model misspecification since this distance vanishes asymptotically in the absence of misspecification, but generally doesn't vanish otherwise.
@@ -49,13 +55,13 @@ Given a consistent estimator for the asymptotic covariance matrix, we can form a
 where $p$ is the parameter dimension and $\hV_H$ is the covariate matrix of $\sqrt{N}(\htheta_W - \htheta_S)$ and $\hV = \Sigma_W^{-1} - \Sigma_S^{-1}$. $\Sigma_W$ and $\Sigma_S$ are the inverse of asymptotic matrixs of IPW estimator and MSCLE respectively.
 
 \begin{proof}
-We first have 
+We first have \why{use $\Var$ and $\Cov$ instead of $var$ and $cov$ throughout the paper.}
 $$\hV_H = var(\sqrt{N} (\htheta_W - \htheta_S)) = \Sigma_W^{-1} + \Sigma_S^{-1} - 2N cov(\htheta_W, \htheta_S).$$
 
 Then we just need to calculate $cov(\htheta_W, \htheta_S)$.
 
 
-For Eqs. \eqref{eq:score_W, eq:score_S}, we expense them at the true value $\btheta_0$, then we have
+For Eqs. \why{this does not work:} \eqref{eq:score_W, eq:score_S}, we expense them at the true value $\btheta_0$, then we have
 \begin{eqnarray}
     0 &=& \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_W (\btheta_0; \x_i, y_i, \delta_i) + [\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i)] \sqrt{N} (\htheta_W - \htheta_0) + \op, \\
     0 &=& \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_S (\btheta_0; \x_i, y_i, \delta_i) + [\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i)] \sqrt{N} (\htheta_S - \htheta_0) + \op. 
