@@ -5,8 +5,8 @@
 
 \begin{document}
 \title{Hypothesis test of conditional subsampling}
-% \author{HaiYing Wang\\
-%   Department of Statistics, University of Connecticut}
+ \author{HaiYing Wang\\
+   Department of Statistics, University of Connecticut}
 \maketitle
 % \begin{abstract}
 % \end{abstract}
@@ -14,23 +14,24 @@
 \begin{section}{Hypothesis Test}
 
 We note that that the score function of IPW is
-\why{Use align instead of eqnarray.}
-\begin{eqnarray}\label{eq:score_W}
-    \psi_W (\htheta; \x, y, \delta) = \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \log f(y\mid \x,\btheta),
-\end{eqnarray}
+\begin{equation*}
+    \psi_W (\btheta; \x, y, \delta) = \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \log f(y\mid \x,\btheta),
+\end{equation*}
 and 
-\why{Use align or equation instead of \$\$.}
-$$\sum_{i=1}^{N} \psi_W (\htheta_W; \x_i, y_i, \delta_i) = 0,$$ 
+\begin{align}\label{eq:score_W}
+    \sum_{i=1}^{N} \psi_W (\htheta_W; \x_i, y_i, \delta_i) = 0,
+\end{align}
 where $\htheta_W$ is the IPW estimator.
 Samewise, the score function of MSCLE is 
-\begin{eqnarray}\label{eq:score_S}
-    \psi_S (\htheta; \x, y, \delta) = \delta [\nabla_{\btheta} \log f(y\mid \x,\btheta) - \nabla_{\btheta} \log \bapi(\x, y)],
-\end{eqnarray}
-and 
-$$\sum_{i=1}^{N} \psi_S (\htheta_S; \x_i, y_i, \delta_i) = 0,$$
- where $\htheta_S$ is the MSECLE and $\bapi(\x, y) = \int f(y \mid \x,\btheta) \pi(\x, y)$.
-As it is mentioned by \why{it should be ``cite'' instead of ``citep'' here
-  (similar problem in other places):} \citep{wang2022maximum}, the IPW estimator $\hbeta_W$ is
+\begin{align}
+    \psi_S (\btheta; \x, y, \delta) &= \delta [\nabla_{\btheta} \log f(y\mid \x,\btheta) - \nabla_{\btheta} \log \bapi(\x, y)],
+\end{align}
+and
+\begin{align}\label{eq:score_S}
+    \sum_{i=1}^{N} \psi_S (\htheta_S; \x_i, y_i, \delta_i) = 0,
+\end{align} 
+ where $\htheta_S$ is the MSCLE and $\bapi(\x, y) = \int f(y \mid \x,\btheta) \pi(\x, y)$.
+As it is mentioned by \cite{wang2022maximum}, the IPW estimator $\hbeta_W$ is
 consistent, because the conditional expectation of the selection indicator
 $\delta$ give the data equals the inclusion probability and therefore the
 expectation of the objective function for the IPW estimator is the same as that
@@ -38,64 +39,155 @@ of the full data MLE.
 Yet, the MSCLE is estimated by the assumed model structure to derive the subsampled conditional likelihood, 
 so if the subsampling probabilities also depend on the data then the MSCLE is not consistent to the same limit as the full data MLE when the assumed model structure is misspecified. 
 That brings a thought that the distance between IPW estimator and MSCLE can be used as an indicator of model misspecification since this distance vanishes asymptotically in the absence of misspecification, but generally doesn't vanish otherwise.
-We consider the Hausman-type test \citep{hausman1978specification, white1982maximum} to intruduce the following test statistic. 
+Hausman-type test \cite{hausman1978specification, white1982maximum} is established to evaluate the difference between these two parameters, i.e., one is stable when no misspecification, while the othe is more efficient yet not that stable.
 The misspecification indicator is $\htheta_W - \htheta_S$, so we investigate the asymptotic distribution of $\sqrt{N} (\htheta_W - \htheta_S)$. 
 We anticipate that with appropriate regularity conditions, $\sqrt{N} (\htheta_W - \htheta_S)$ will be normally distributed asymptotically with mean zero in the absence of misspecification. 
 Given a consistent estimator for the asymptotic covariance matrix, we can form an asymptotic chi-square statistic. 
 \begin{assumption}
     \begin{itemize}
-        \item[(1)] $\Sigma_W^{-1} - \Sigma_S^{-1}$ is a semi-positive definite matrix.
+        \item[(1)] $||\nabla_{\btheta} \log f(y\mid \x,\btheta)||$ and $||\nabla^2_{\btheta} \log f(y\mid \x,\btheta)||$ are integrable, where $||A|| = tr^{1/2} (A^\top A)$ is the norm for a vector or matrix $A$.
+        \item[(2)] The parameter space $\btheta$ is compact and the third order partial derivative of $\log f(y\mid \x,\btheta)$ and $\log \bapi(\x, y)$ with respect to any components of $\btheta$ is bounded in absolute value by an integrable function $B(\x; y)$ that does not depend on $\btheta$.
+        \item[(3)]  The variance matrix of the two estimators are finite and positive definite.
+        \item[(4)] $\btheta_0$ is the unique solution to the population minimization problem $\min_{\btheta \in \Theta} \E [\log f(y\mid \x,\btheta)]$.
+        \item[(5)] Assume that the weighted objection function $\frac{\delta log f(y\mid \x,\btheta)}{\pi(\x, y)} $ is twice continuously differentiable and is bounded in absolute value by an integrable function $B(\x; y)$ that does not depend on $\btheta$ {(\color{red}Note: This may overlap with Assumption~(2).)}
+        \item[(6)] $\Sigma_W^{-1} - \Sigma_S^{-1}$ is positive semidefinite. {\color{red} However, according to the Theorem 2 in \cite{wang2022maximum}, $\Sigma_W^{-1} \geq \Sigma_S^{-1}$, hence this condition is automatically satisfied. }
+        
     \end{itemize}
 \end{assumption}
 
+Assumptions~(1)--(3) provide the essential regularity conditions for the asymptotic properties of the MSCLE estimator. Assumptions~(3)--(5) furnish the necessary regularity conditions for the asymptotic properties of the IPW estimator. Assumption~(6) ensures the existence of the covariance matrix of $\htheta_W - \htheta_S$, which supports Lemma~\ref{le:test stat}.
+
 \begin{lemma}\label{le:test stat}
-    Under the absence of model misspecification, the test statistic
-    $$H_N = N (\htheta_W - \htheta_S) \hV_H^{-1} (\htheta_W - \htheta_S)^\top \sim \chi^2_{p},$$
+    Under the null hypothesis of no misspecification, we consider the test statistic
+    \begin{equation*}
+        H_N = N (\htheta_W - \htheta_S) \hV_H^{-1} (\htheta_W - \htheta_S)^\top \sim \chi^2_{p},
+    \end{equation*}
 \end{lemma}
-where $p$ is the parameter dimension and $\hV_H$ is the covariate matrix of $\sqrt{N}(\htheta_W - \htheta_S)$ and $\hV = \Sigma_W^{-1} - \Sigma_S^{-1}$. $\Sigma_W$ and $\Sigma_S$ are the inverse of asymptotic matrixs of IPW estimator and MSCLE respectively.
+where $p$ is the parameter dimension and $\hV_H$ is the approximated estimation of covariate matrix of $\sqrt{N}(\htheta_W - \htheta_S)$ that $\hV_H = \Sigma_W^{-1} - \Sigma_S^{-1}$. $\Sigma_W$ and $\Sigma_S$ are the inverse of asymptotic matrixs of IPW estimator and MSCLE respectively.
 
 \begin{proof}
-We first have \why{use $\Var$ and $\Cov$ instead of $var$ and $cov$ throughout the paper.}
-$$\hV_H = var(\sqrt{N} (\htheta_W - \htheta_S)) = \Sigma_W^{-1} + \Sigma_S^{-1} - 2N cov(\htheta_W, \htheta_S).$$
-
-Then we just need to calculate $cov(\htheta_W, \htheta_S)$.
-
-
-For Eqs. \why{this does not work:} \eqref{eq:score_W, eq:score_S}, we expense them at the true value $\btheta_0$, then we have
-\begin{eqnarray}
-    0 &=& \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_W (\btheta_0; \x_i, y_i, \delta_i) + [\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i)] \sqrt{N} (\htheta_W - \htheta_0) + \op, \\
-    0 &=& \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_S (\btheta_0; \x_i, y_i, \delta_i) + [\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i)] \sqrt{N} (\htheta_S - \htheta_0) + \op. 
-\end{eqnarray}
-Assume that $A_W = \Exp [- \nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)]$ and $A_S = \Exp [- \nabla_{\btheta} \psi_S (\btheta_0; \x, y, \delta)]$, with the large law of number, we have 
-$$\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i) \cvp -A_W,$$
+Since $\htheta_W$ and $\htheta_S$ all have the asymptotic properties, then under the null hypothesis, it follows from \cite{liu2016inverse, wang2022maximum} that
+\begin{equation*}
+   \sqrt{N} \htheta_W \sim \N(\btheta_0, \Sigma_W^{-1}),
+\end{equation*} 
 and 
-$$\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i) \cvp -A_S.$$
+\begin{equation*}
+   \sqrt{N} \htheta_S \sim \N(\btheta_0, \Sigma_S^{-1}).
+\end{equation*}
+% While under the situation of misspecification, two estimators also converge but not converge to the same parameter.
+% IPW estimator still converges to the MLE of full data.
+% Yet MSCLE is optimized through the expectation of prior distribution $\bapi(\x, y)$, which is related with the model assumption. 
+% When the model is misspecificated, a wrong $\bapi(\x, y)$ will lead to a biased MSCLE. 
+
+Consider the difference estimator $D_N = \htheta_W - \htheta_S$, 
+we first have $\sqrt{N} D_N \sim \N (0, V_H)$, that the approximation estimate of $V_H$ can be derived as
+\begin{equation*}
+    \hV_H = \Var(\sqrt{N} (\htheta_W - \htheta_S)) \xrightarrow{P} \Sigma_W^{-1} + \Sigma_S^{-1} - 2N \Cov(\htheta_W, \htheta_S),
+\end{equation*}
+as $N$ goes to infinity.
+Then we just need to calculate the limit form of $\Cov(\htheta_W, \htheta_S)$.
+
+$\htheta_W$ and $\htheta_S$ are the solutions of  \eqref{eq:score_W} and \eqref{eq:score_S}, so we expense these two equations at the true value $\btheta_0$ and have
+\begin{align}
+    0 &= \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_W (\btheta_0; \x_i, y_i, \delta_i) + [\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i)] \sqrt{N} (\htheta_W - \htheta_0) + \op, \\
+    0 &= \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_S (\btheta_0; \x_i, y_i, \delta_i) + [\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i)] \sqrt{N} (\htheta_S - \htheta_0) + \op. 
+\end{align}
+Assume that $A_W = \Exp [- \nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)]$ and $A_S = \Exp [- \nabla_{\btheta} \psi_S (\btheta_0; \x, y, \delta)]$, with the large law of number, we have 
+\begin{equation*}
+    \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i) \cvp -A_W,
+\end{equation*}
+and 
+\begin{equation*}
+    \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i) \cvp -A_S.
+\end{equation*}
 Let $B_{WS} = \Exp [\psi_W (\btheta_0; \x, y, \delta) \psi_S (\btheta_0; \x, y, \delta)^\top]$, we have
-\begin{eqnarray}
-    \nonumber
-    B_{WS} &=& \Exp \left[ \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \left( \nabla_{\btheta} \log f(y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \\ 
-    &=& \Exp_{(\x,y)} \left[ \Exp  \left[ \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \left( \nabla_{\btheta} \log f(y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \mid (\x,y)\right]. 
-\end{eqnarray}
+\begin{align}
+    \notag
+    B_{WS} &= \Exp \left[ \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \left( \nabla_{\btheta} \log f(y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \\ 
+    &= \Exp_{(\x,y)} \left[ \Exp  \left[ \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \left( \nabla_{\btheta} \log f(y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \mid (\x,y)\right]. 
+\end{align}
 Since $\Exp[\delta \mid \x,y] = \pi(\x,y)$,
-\begin{eqnarray}
-    \nonumber
-    B_{WS} &=& \Exp_{(\x,y)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \left( \nabla_{\btheta} \log f(y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \\ \nonumber
-    &=& \I(\btheta_0) - \Exp_{(\x,y)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \nabla_{\btheta} \log \bapi(\x, y)^\top \right] \\ \nonumber
-    &=& \I(\btheta_0) - \Exp_{(y)} \left[ \Exp_{(\x)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \right] \nabla_{\btheta} \log \bapi(\x, y)^\top  \right] \\
-    &=& \I(\btheta_0),
-\end{eqnarray}
+\begin{align}
+    \notag
+    B_{WS} &= \Exp_{(\x,y)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \left( \nabla_{\btheta} \log f(y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \\ \notag
+    &= \I(\btheta_0) - \Exp_{(\x,y)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \nabla_{\btheta} \log \bapi(\x, y)^\top \right] \\ \notag
+    &= \I(\btheta_0) - \Exp_{(y)} \left[ \Exp_{(\x)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \right] \nabla_{\btheta} \log \bapi(\x, y)^\top  \right] \\
+    &= \I(\btheta_0),
+\end{align}
 where $\I(\btheta_0)$ is the Fisher information matrix of $\btheta_0$ and $\Exp_{(\x)} \left[ \nabla_{\btheta} \log f(y\mid \x,\btheta_0) \right]=0$.
 
-Besides, 
-$$A_W = \Exp [- \nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)] = \Exp_{(\x,y)} \left[- \nabla_{\btheta}^2 \ell_W (\btheta_0; \x, y, \delta) \right] = \I(\btheta_0),$$
+Besides,
+\begin{equation*}
+    A_W = \Exp [- \nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)] = \Exp_{(\x,y)} \left[- \nabla_{\btheta}^2 \ell_W (\btheta_0; \x, y, \delta) \right] = \I(\btheta_0),
+\end{equation*} 
 while
-$$A_S  = \Exp [-\nabla_{\btheta}^2 \ell_S(\btheta_0; \x, y, \delta)] = \Sigma_S,$$
-with the conclusion in \citep{wang2022maximum} (A.12) that $-\frac{1}{N} \nabla_{\btheta}^2 \ell_S(\btheta_0; \x, y, \delta) = \Sigma_S + \op$.
+\begin{equation*}
+    A_S  = \Exp [-\nabla_{\btheta}^2 \ell_S(\btheta_0; \x, y, \delta)] = \Sigma_S,
+\end{equation*}
+with the conclusion in \cite{wang2022maximum} (A.12) that $-\frac{1}{N} \nabla_{\btheta}^2 \ell_S(\btheta_0; \x, y, \delta) = \Sigma_S + \op$.
 
 Thus we have
-$cov(\sqrt{N} \htheta_W, \sqrt{N} \htheta_S) = A_W^{-1} B_{WS} A_S^{-1 \top} = \Sigma_S^{-1}$ and $\hV_H = \Sigma_W^{-1}-\Sigma_S^{-1}$.
-
+$\Cov(\sqrt{N} \htheta_W, \sqrt{N} \htheta_S) = A_W^{-1} B_{WS} A_S^{-1 \top} = \Sigma_S^{-1}$.
+Recall that
+\begin{equation*}
+    \hV_H \xrightarrow{P} \Sigma_W^{-1} + \Sigma_S^{-1} - 2N \Cov(\htheta_W, \htheta_S) \xrightarrow{P} \Sigma_W^{-1} - \Sigma_S^{-1}.
+\end{equation*}
+Then we derive that the covariate matrix $V_H \xrightarrow{P} \hat{V}_H$, thus based on the property of Wald-type statistics \cite{van2000asymptotic}, the test statistic $H_N$ follows a chi-square distribution $\chi_p^2$.
 \end{proof}
+
+As a result, $H_N$ can be used as a test statistic to decide whether the IPW or the MSCLE estimator should be chosen. 
+Let $\btheta_0^*$ denote the full-data maximum likelihood estimator. Note that $\htheta_W \xrightarrow{p} \btheta_0^*$ holds under any specification, whereas $\htheta_S \xrightarrow{p} \btheta_0^*$ may fail if the model is misspecified.
+The corresponding hypothesis test is formulated as follows:
+\begin{equation*}
+    H_0: \E[\htheta_W - \htheta_S]=0 \leftrightarrow H_1:  \E[\htheta_S - \htheta_S]\neq 0,
+\end{equation*}
+that null hypothesis $H_0$ represents that the model assumption $\log f(y\mid \x,\btheta)$ is correct while the alternative hypothesis $H_1$ represents that the model is misspecified.
+We then compute the $p$-value $p_H = 1 - F_{\chi_p^2}(H_N)$ and compare it with the predetermined significance level $\alpha$.  
+If $p_H \leq \alpha$, we reject $H_0$ and choose the IPW estimator for more stable estimation; otherwise, we accept $H_0$ and select the MSCLE estimator for greater efficiency.  
+Thus, we define a new combined estimator that incorporates both the IPW and MSCLE estimators via the hypothesis-test indicator:
+\begin{align}
+    \btheta_N &= \I\{H_N \geq c_\alpha\} \htheta_W + \I\{H_N < c_\alpha\} \htheta_S,
+\end{align}
+where $c_\alpha$ is the upper confidence limit of level $\alpha$ for the chi-squared test and $\I(\cdot)$ is the indicator function.
+We now study the property of the new estimator $\btheta_N$, considering two separate cases. 
+The situation should be discussed seperately. 
+First, if $H_0$ is accepted, when $n \rightarrow \infty$, we have $P(H_N > c_\alpha) \rightarrow \alpha$, then we have probability $\alpha$ to choose IPW estimator and probability $1-\alpha$ to choose MSCLE. 
+In this scenario, we analyze the efficiency of this mixture estimator.
+Otherwise, if the model is misspecified, then as $n \to \infty$, $P(H_N \geq c_\alpha) \to 1$, and $\btheta_N$ converges asymptotically to the IPW estimator.
+
+We first discuss the situation when the model is misspecificated. We prove the following lemma.
+\begin{lemma}\label{le:mis_conv}
+    When the model is misspecificated, $\btheta_N \xrightarrow{p} \htheta_W$.
+\end{lemma}
+
+\begin{proof}
+    To prove this, we should prove that $\I\{H_N \geq c_\alpha\} \xrightarrow{p} 1$.
+    Based on the conclusion in \cite{van2000asymptotic}, IPW $\htheta_W$ is estimated by solving
+    \begin{align}
+        \g_W(\btheta_W) &= \E^t \left\{ \dl(\btheta_W; \x, y) \right\} = 0,
+    \end{align}
+    and MSCLE $\htheta_S$ is estimated by solving
+    \begin{align}
+        \notag
+        \g_S(\btheta_S) &= \E^t \left\{ \E^t \left[ \dl(\btheta_S; \x, y) \pi(\x,y;\btheta_0) \right]  -\frac{\E^t \left[ \pi(\x,y;\btheta_0) \mid \x \right]}{\E^w \left[ \pi(\x,y;\btheta_0) \mid \x \right]} \E^w \left[ \dl(\btheta_S; \x, y) \pi(\x,y;\btheta_0) \right] \right\} \\
+        &= 0,
+    \end{align}
+    where we use $\E^t$ to emphasize that the expectation is taken with respect to the true data
+    distribution and $\E^w$ is the expectation under the assumed working model and $\btheta_0$ is the fixed parameter in calculating the sampling probabilities. To estimate the distence between IPW and MSCLE, we use Taylor expansion, deriving that 
+    \begin{align}
+        \htheta_W - \htheta_S &= \dot g_S(\htheta_W)^{-1} g_S(\htheta_W) + \Op.
+    \end{align}
+    Thus, in most cases, as long as $\htheta_W$ isn't the solution of $g_S(\btheta)$, then we have $\btheta_W \neq \btheta_S$.
+    %Under model misspecification, the asymptotic covariance matrix of $\sqrt{N} (\htheta_W - \htheta_S)$
+   %differs from the one under the null hypothesis, since the two estimators converge to distinct pseudo-true parameters. 
+   Nevertheless, the divergence of the Hausman-type statistic and the consistency of the pre-test estimator remain valid provided that the covariance estimator $\hat{V}_H = \Cov(\htheta_W, \htheta_S)$ is consistent and positive definite. Under these conditions, $H_N =N (\htheta_W - \htheta_S) \hV_H^{-1} (\htheta_W - \htheta_S)^\top \xrightarrow{p} \infty$, which easily derives that $\I\{H_N \geq c_\alpha\} \xrightarrow{p} 1$. Thus we have $\htheta_S \I\{H_N < c_\alpha\} \xrightarrow{p} 0$, and we have $\btheta_N \xrightarrow{p} \htheta_W$.
+\end{proof}
+
+We next discuss the case when the model is correctly specified. Since both the IPW and MSCLE estimators converge to the same value $\btheta_0$, we consider the following combined estimator:
+$\sqrt{N} (\btheta_N - \btheta)= \sqrt{N} (\htheta_W - \btheta) \I\{H_N \geq c_\alpha\} + \sqrt{N} (\htheta_S - \btheta) \I\{H_N < c_\alpha\}$.
+%$\E[\btheta_N - \htheta_W] = \E[\I\{p_N \leq \alpha\} (\htheta_W - \htheta_W)] + \E[\I\{p_N > \alpha\} (\htheta_S - \htheta_W)] = \E[\I\{p_N > \alpha\} (\htheta_S - \htheta_W)]$.
+
+
 
 \end{section}
 
