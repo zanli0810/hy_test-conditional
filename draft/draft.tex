@@ -180,15 +180,29 @@ We first discuss the situation when the model is misspecificated. We prove the f
     Thus, in most cases, as long as $\htheta_W$ isn't the solution of $g_S(\btheta)$, then we have $\btheta_W \neq \btheta_S$.
     %Under model misspecification, the asymptotic covariance matrix of $\sqrt{N} (\htheta_W - \htheta_S)$
    %differs from the one under the null hypothesis, since the two estimators converge to distinct pseudo-true parameters. 
-   Nevertheless, the divergence of the Hausman-type statistic and the consistency of the pre-test estimator remain valid provided that the covariance estimator $\hat{V}_H = \Cov(\htheta_W, \htheta_S)$ is consistent and positive definite. Under these conditions, $H_N =N (\htheta_W - \htheta_S) \hV_H^{-1} (\htheta_W - \htheta_S)^\top \xrightarrow{p} \infty$, which easily derives that $\I\{H_N \geq c_\alpha\} \xrightarrow{p} 1$. Thus we have $\htheta_S \I\{H_N < c_\alpha\} \xrightarrow{p} 0$, and we have $\btheta_N \xrightarrow{p} \htheta_W$.
+   Nevertheless, the divergence of the Hausman-type statistic and the consistency of the pre-test estimator remain valid provided that the covariance estimator $\Cov(\htheta_W, \htheta_S)$ is consistent and positive definite. Under these conditions, $H_N =N (\htheta_W - \htheta_S) \hV_H^{-1} (\htheta_W - \htheta_S)^\top \xrightarrow{p} \infty$, which easily derives that $\I\{H_N \geq c_\alpha\} \xrightarrow{p} 1$. Thus we have $\htheta_S \I\{H_N < c_\alpha\} \xrightarrow{p} 0$, and we have $\btheta_N \xrightarrow{p} \htheta_W$.
 \end{proof}
 
 We next discuss the case when the model is correctly specified. Since both the IPW and MSCLE estimators converge to the same value $\btheta_0$, we consider the following combined estimator:
-$\sqrt{N} (\btheta_N - \btheta)= \sqrt{N} (\htheta_W - \btheta) \I\{H_N \geq c_\alpha\} + \sqrt{N} (\htheta_S - \btheta) \I\{H_N < c_\alpha\}$.
+$\sqrt{N} (\btheta_N - \btheta_0)= \sqrt{N} (\htheta_W - \btheta_0) \I\{H_N \geq c_\alpha\} + \sqrt{N} (\htheta_S - \btheta_0) \I\{H_N < c_\alpha\}$.
 %$\E[\btheta_N - \htheta_W] = \E[\I\{p_N \leq \alpha\} (\htheta_W - \htheta_W)] + \E[\I\{p_N > \alpha\} (\htheta_S - \htheta_W)] = \E[\I\{p_N > \alpha\} (\htheta_S - \htheta_W)]$.
+\begin{equation*}
+    \E[ \btheta_N - \btheta_0 ] = \E[\I\{H_N \geq c_\alpha\} (\htheta_W - \btheta_0)] + \E[\I\{H_N < c_\alpha\} (\htheta_S - \btheta_0)] = \E[\I\{p_N > \alpha\} (\htheta_S - \htheta_W)].
+\end{equation*}
 
-
-
+\begin{align}\label{eq:HNmean}
+    \notag
+    & \E[(\htheta_W - \btheta_0) \I\{H_N \geq c_\alpha\}] = \E[\E[(\htheta_W - \btheta_0) \mid \htheta_W-\htheta_S] \I\{H_N \geq c_\alpha\}] \\
+    \notag
+    &= \E[N \Cov(\htheta_W - \btheta_0, \htheta_W-\htheta_S) \Sigma_{S} (\htheta_W-\htheta_S) \I\{H_N \geq c_\alpha\}] \\ 
+    &= (\Sigma_W^{-1}-\Sigma_S^{-1}) \Sigma_{S} \E[(\htheta_W-\htheta_S) \I\{N(\htheta_W-\htheta_S)V_{H}^{-1}(\htheta_W-\htheta_S)^\top \geq c_\alpha\}] = 0.
+\end{align}
+Since
+\begin{equation*}
+    \htheta_W-\htheta_S \sim \N(0, \frac{\Sigma_S^{-1}}{N}).
+\end{equation*}
+and the sample space of $\{(\htheta_W-\htheta_S) \in \R^k: \I\{H_N \geq c_\alpha\}=1\}$ should be a exterior of ellipsoid, eq~\eqref{eq:HNmean} equals to 0.
+Thus, we have $\btheta_N$ is an unbiased estiamtor.
 \end{section}
 
 
