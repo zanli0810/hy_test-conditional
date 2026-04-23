@@ -5,8 +5,7 @@
 
 \begin{document}
 \title{Hypothesis test of conditional subsampling}
- \author{HaiYing Wang\\
-   Department of Statistics, University of Connecticut}
+\author{HaiYing Wang}
 \maketitle
 % \begin{abstract}
 % \end{abstract}
@@ -14,7 +13,7 @@
 \begin{section}{Hypothesis Test}
 
 We note that that the score function of IPW is
-\begin{equation*}
+\begin{equation*}\label{psi_W}
     \psi_W (\btheta; \x, y, \delta) = \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \dl  (y\mid \x,\btheta),
 \end{equation*}
 and 
@@ -24,7 +23,7 @@ and
 where $\htheta_W$ is the IPW estimator.
 Samewise, the score function of MSCLE is 
 \begin{align}
-    \psi_S (\btheta; \x, y, \delta) &= \delta [\nabla_{\btheta} \dl (y\mid \x,\btheta) - \nabla_{\btheta} \log \bapi(\x, y)],
+    \psi_S (\btheta; \x, y, \delta) &= \delta [\nabla_{\btheta} \dl (y\mid \x,\btheta) - \log \bapi(\x, y)],
 \end{align}
 and
 \begin{align}\label{eq:score_S}
@@ -45,11 +44,11 @@ We anticipate that with appropriate regularity conditions, $\sqrt{N} (\htheta_S 
 Given a consistent estimator for the asymptotic covariance matrix, we can form an asymptotic chi-square statistic. 
 \begin{assumption}
     \begin{itemize}
-        \item[(1)] $|| \psi_{\mathcal{T}} (\btheta; \x, y, \delta)||$ and $||\nabla_{\btheta} \psi_{\mathcal{T}} (\btheta; \x, y, \delta)||$ are integrable, where $\mathcal{T} = \{W,S, SM\}$ and $||A|| = tr^{1/2} (A^\top A)$ is the norm for a vector or matrix $A$.
-        \item[(2)] The parameter space $\btheta$ is compact and the third order partial derivative of $\psi_{\mathcal{T}} (y\mid \x,\btheta)$ and $\log \bapi(\x, y)$ with respect to any components of $\btheta$ is bounded in absolute value by an integrable function $B(\x; y)$ that does not depend on $\btheta$.
-        \item[(3)]  The variance matrix of the two estimators are finite and positive definite.
-        \item[(4)] $\btheta_0$ is the unique solution to the population minimization problem $\min\limits_{\btheta \in \Theta} \E [\dl (y\mid \x,\btheta)]$.
-        \item[(5)] Assume that the weighted objection function $\ell_{W} (y\mid \x,\btheta) $ is twice continuously differentiable and is bounded in absolute value by an integrable function $B(\x; y)$ that does not depend on $\btheta$ {(\color{red}Note: This may overlap with Assumption~(2).)}
+        \item[(1)] $\| \psi_{\mathcal{T}} (\btheta; \x, y, \delta)\|, \|\nabla_{\btheta} \psi_{\mathcal{T}} (\btheta; \x, y, \delta)\|$ are integrable, where $\mathcal{T} = \{W,$ $SM\}$ and $\|A\| = tr^{1/2} (A^\top A)$ is the norm for a vector or matrix $A$.
+        \item[(2)] The parameter space $\btheta$ is compact and the third order partial derivative of $\psi_{\mathcal{T}} (y\mid \x,\btheta)$ and $\log \bapi(\x, y)$ with respect to any components of $\btheta$ is bounded in absolute value by an integrable function $B(\x; y)$ that does not depend on $\btheta$. Moreover, $\Exp[B^2(\x; y)] < \infty$.
+        \item[(3)] $\hat{A}_{\mathcal{T}}$ is a nonsingular matrix and the variance matrix $\Sigma_W^{-1}$ and $\Sigma_S^{-1}$ are finite and positive definite.
+        \item[(4)] $\btheta_0$ is the unique solution to the population minimization problem $\min\limits_{\btheta \in \Theta} \Exp [\dl (y\mid \x,\btheta)]$.
+        \item[(5)] $\Exp[\nabla_{\btheta} \psi_{\mathcal{T}} (\btheta; \x, y, \delta)]$ is a finite and positive finite matrix.
         \item[(6)] $\Sigma_W^{-1} - \Sigma_S^{-1}$ is positive semidefinite. {\color{red} However, according to the Theorem 2 in \cite{wang2022maximum}, $\Sigma_W^{-1} \geq \Sigma_S^{-1}$, hence this condition is automatically satisfied. }
         
     \end{itemize}
@@ -64,7 +63,7 @@ Assumptions~(1)--(3) provide the essential regularity conditions for the asympto
         H_N = N (\htheta_S - \htheta_W) \hV_H^{-1} (\htheta_S - \htheta_W)^\top.
     \end{equation*}
     We have $\lN H_N \xrightarrow{d} \chi^2_p$,
-    where $p$ is the parameter dimension and $\hV_H$ is the approximated estimation of covariate matrix of $\sqrt{N}(\htheta_S - \htheta_W)$ that $\lN \hV_H = \Sigma_W^{-1} - \Sigma_S^{-1}$. $\Sigma_W$ and $\Sigma_S$ are the inverse of asymptotic matrixs of IPW estimator and MSCLE respectively.
+    where $p$ is the parameter dimension and $\hV_H$ is the approximated estimation of covariate matrix of $\sqrt{N}(\htheta_S - \htheta_W)$ that $\lN \hV_H = \Sigma_W^{-1} - \Sigma_S^{-1}$. $\Sigma_W$ and $\Sigma_S$ are the inverse of asymptotic matrices of IPW estimator and MSCLE respectively.
 \end{lemma}
 
 
@@ -96,45 +95,32 @@ $\htheta_W$ and $\htheta_S$ are the solutions of  \eqref{eq:score_W} and \eqref{
     0 &= \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_W (\btheta_0; \x_i, y_i, \delta_i) + \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i) \right] \sqrt{N} (\htheta_W - \btheta_0) + \op, \\
     0 &= \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_S (\btheta_0; \x_i, y_i, \delta_i) + \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i) \right] \sqrt{N} (\htheta_S - \btheta_0) + \op. 
 \end{align}
-According to the Assumpution 1(1), we assume that $A_W = \Exp [ \nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)]$ and $A_S = \Exp [ \nabla_{\btheta} \psi_S (\btheta_0; \x, y, \delta)]$, with the large law of number, we have 
-\begin{equation*}
-    \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i) \cvp A_W,
-\end{equation*}
-and 
-\begin{equation*}
-    \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i) \cvp A_S.
-\end{equation*}
-Besides,
-\begin{equation*}
-    \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i) \right] \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i) \right] \xrightarrow{P} \Exp [\psi_W (\btheta_0; \x, y, \delta) \psi_S (\btheta_0; \x, y, \delta)^\top] = B_{WS},
-\end{equation*}
-then we have
-\begin{align}
-    \notag
-    B_{WS} &= \Exp \left[ \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \left( \nabla_{\btheta} \dl (y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \\ 
-    &= \Exp_{(\x,y)} \left[ \Exp  \left[ \frac{\delta}{\pi(\x,y)} \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \left( \nabla_{\btheta} \dl (y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \mid (\x,y)\right]. 
-\end{align}
+
+
 Since $\Exp[\delta \mid \x,y] = \pi(\x,y)$,
 \begin{align}\label{B_WS}
     \notag
-    B_{WS} &= \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \left( \nabla_{\btheta} \dl (y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \\ \notag
+    B_{WS} &= \Exp_{(\x,y)} \left[ \psi_W (\btheta_0; \x, y, \delta) \psi_S (\btheta_0; \x, y, \delta)^\top \right] \\ \notag 
+    &= \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \left( \nabla_{\btheta} \dl (y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \\ \notag
     &= \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \nabla_{\btheta} \dl (y\mid \x,\btheta_0)^\top \right] - \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \nabla_{\btheta} \log \bapi(\x, y)^\top \right] \\ \notag
-    &= \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \nabla_{\btheta} \dl (y\mid \x,\btheta_0)^\top \right] - \Exp_{(y)} \left[ \Exp_{(\x)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \right] \nabla_{\btheta} \log \bapi(\x, y)^\top  \right] \\
+    &= \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \nabla_{\btheta} \dl (y\mid \x,\btheta_0)^\top \right] - \Exp_{(x)} \left[ \Exp_{(y \mid \x)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \right] \nabla_{\btheta} \log \bapi(\x, y)^\top  \right] \\
     &= \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \nabla_{\btheta} \dl (y\mid \x,\btheta_0)^\top \right],
 \end{align}
-where we use $\Exp_{(\x)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \right]=0$ in this case.
+where we use $\Exp_{(y \mid \x)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \right]=0$ in this case.
 
-Besides, with the Assumption 1(1) and (5), and Eq.~\ref{B_WS}, we have
+Besides, with the Assumption 1(1) and (5), and Eq.~\eqref{B_WS}, we have
 \begin{equation*}
-    A_W = - \Exp [-\nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)] = - \Exp_{(\x,y)} \left[- \nabla_{\btheta}^2 \ell_W (\btheta_0; \x, y, \delta) \right] = B_{WS},
+    A_W = - \Exp [-\nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)] = - \Exp_{(\x,y)} \left[\nabla_{\btheta}^2 \ell_W (\btheta_0; \x, y, \delta) \right] = -B_{WS},
 \end{equation*} 
 while
 \begin{equation*}
-    A_S  = \Exp [-\nabla_{\btheta}^2 \ell_S(\btheta_0; \x, y, \delta)] = \Sigma_S,
+    A_S  = - \Exp [-\nabla_{\btheta}^2 \ell_S(\btheta_0; \x, y, \delta)] = - \Sigma_S,
 \end{equation*}
 with the conclusion in \cite{wang2022maximum} (A.12) that $-\frac{1}{N} \nabla_{\btheta}^2 \ell_S(\btheta_0; \x, y, \delta) = \Sigma_S + \op$.
 
-Thus we have
+Rearranging Eq.~\eqref{eq:tay_psi} and noting that 
+$N^{-1}\sum_{i=1}^N \nabla_{\btheta}\psi_W(\btheta_0; ; \x_i, y_i, \delta_i) \cvp A_W$ with $A_W$ nonsingular (Assumption 1(5)), 
+an application of Slutsky's theorem yields
 \begin{equation*}
     \lN \sqrt{N} (\htheta_W - \btheta_0) = - A_W^{-1} (\frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_W (\btheta_0; \x_i, y_i, \delta_i)) +\op,
 \end{equation*}
@@ -148,7 +134,7 @@ Then
 \end{equation*}
 Recall that
 \begin{equation*}
-    \hV_H \xrightarrow{P} \Sigma_W^{-1} + \Sigma_S^{-1} - 2N \Cov(\htheta_W, \htheta_S) \xrightarrow{P} \Sigma_W^{-1} - \Sigma_S^{-1}.
+    \hV_H \cvp \Sigma_W^{-1} + \Sigma_S^{-1} - 2N \Cov(\htheta_W, \htheta_S) \cvp \Sigma_W^{-1} - \Sigma_S^{-1}.
 \end{equation*}
 Thus based on the property of Wald-type statistics \cite{van2000asymptotic} and Slutsky's Theorem, the test statistic $H_N$ follows a chi-square distribution $\chi_p^2$.
 \end{proof}
@@ -157,11 +143,11 @@ As a result, $H_N$ can be used as a test statistic to decide whether the IPW or 
 % Let $\btheta_0^*$ denote the full-data maximum likelihood estimator. Note that $\htheta_W \xrightarrow{p} \btheta_0^*$ holds under any specification, whereas $\htheta_S \xrightarrow{p} \btheta_0^*$ may fail if the model is misspecified.
 The corresponding hypothesis test is formulated as follows:
 \begin{equation*}
-    H_0: \E[\htheta_S - \htheta_W]=0 \leftrightarrow H_1:  \E[\htheta_S - \htheta_S]\neq 0,
+    H_0: \Exp[\htheta_S - \htheta_W]=0 \leftrightarrow H_1:  \Exp[\htheta_S - \htheta_W]\neq 0,
 \end{equation*}
 that null hypothesis $H_0$ represents that the model assumption $\dl (y\mid \x,\btheta)$ is correct while the alternative hypothesis $H_1$ represents that the model is misspecified.
 We then compute the $p$-value $p_H = 1 - F_{\chi_p^2}(H_N)$ and compare it with the predetermined significance level $\alpha$.  
-If $p_H \leq \alpha$, we reject $H_0$ and choose the IPW estimator for more stable estimation; otherwise, we accept $H_0$ and select the MSCLE estimator for greater efficiency.  
+If $p_H \leq alpha$, we reject $H_0$ and choose the IPW estimator for more stable estimation; otherwise, we accept $H_0$ and select the MSCLE estimator for greater efficiency.  
 Thus, we define a new combined estimator that incorporates both the IPW and MSCLE estimators via the hypothesis-test indicator:
 \begin{align}
     \htheta_N &= \I\{H_N \geq c_\alpha\} \htheta_W + \I\{H_N < c_\alpha\} \htheta_S,
@@ -172,109 +158,251 @@ The situation should be discussed seperately.
 First, if $H_0$ is accepted, when $n \rightarrow \infty$, we have $P(H_N > c_\alpha) \rightarrow \alpha$, then we have probability $\alpha$ to choose IPW estimator and probability $1-\alpha$ to choose MSCLE. 
 When the model is correctly specified or both the IPW and MSCLE estimators converge to the same full data estimator $\btheta_l$, $\htheta_N$ is the unbias estimatior since it is the combination of two unbiased estimator
 % $\sqrt{N} (\htheta_N - \btheta_0)= \sqrt{N} (\htheta_W - \btheta_0) \I\{H_N \geq c_\alpha\} + \sqrt{N} (\htheta_S - \btheta_0) \I\{H_N < c_\alpha\}$.
-\begin{equation*}
-    \E[ \htheta_N - \btheta_0 ] = \E[\I\{H_N \geq c_\alpha\} (\htheta_W - \btheta_0)] + \E[\I\{H_N < c_\alpha\} (\htheta_S - \btheta_0)] = 0.
+\begin{equation*}\label{eq:HNmean}
+    \Exp[ \htheta_N - \btheta_0 ] = \Exp[\I\{H_N \geq c_\alpha\} (\htheta_W - \btheta_0)] + \Exp[\I\{H_N < c_\alpha\} (\htheta_S - \btheta_0)] = 0.
 \end{equation*}
 % \begin{align}\label{eq:HNmean}
 %     \notag
-%     & \E[(\htheta_W - \btheta_0) \I\{H_N \geq c_\alpha\}] = \E[\E[(\htheta_W - \btheta_0) \mid \htheta_W-\htheta_S] \I\{H_N \geq c_\alpha\}] \\
+%     & \Exp[(\htheta_W - \btheta_0) \I\{H_N \geq c_\alpha\}] = \Exp[\Exp[(\htheta_W - \btheta_0) \mid \htheta_W-\htheta_S] \I\{H_N \geq c_\alpha\}] \\
 %     \notag
-%     &= \E[N \Cov(\htheta_W - \btheta_0, \htheta_W-\htheta_S) \Sigma_{S} (\htheta_W-\htheta_S) \I\{H_N \geq c_\alpha\}] \\ 
-%     &= (\Sigma_W^{-1}-\Sigma_S^{-1}) \Sigma_{S} \E[(\htheta_W-\htheta_S) \I\{N(\htheta_W-\htheta_S)V_{H}^{-1}(\htheta_W-\htheta_S)^\top \geq c_\alpha\}] = 0.
+%     &= \Exp[N \Cov(\htheta_W - \btheta_0, \htheta_W-\htheta_S) \Sigma_{S} (\htheta_W-\htheta_S) \I\{H_N \geq c_\alpha\}] \\ 
+%     &= (\Sigma_W^{-1}-\Sigma_S^{-1}) \Sigma_{S} \Exp[(\htheta_W-\htheta_S) \I\{N(\htheta_W-\htheta_S)V_{H}^{-1}(\htheta_W-\htheta_S)^\top \geq c_\alpha\}] = 0.
 % \end{align}
 Since
 \begin{equation*}
    \sqrt{N} (\htheta_W-\htheta_S) \sim \N(0, \Sigma_S^{-1}).
 \end{equation*}
-and the sample space of $\{(\htheta_W-\htheta_S) \in \R^k: \I\{H_N \geq c_\alpha\}=1\}$ should be a exterior of ellipsoid, eq~\eqref{eq:HNmean} equals to 0.
+and the sample space of $\{(\htheta_W-\htheta_S) \in \R^k: \I\{H_N \geq c_\alpha\}=1\}$ should be a exterior of ellipsoid, Eq.~\eqref{eq:HNmean} equals to 0.
 Thus, we have $\htheta_N$ is an unbiased estiamtor.
 
-When the model is misspecificated, the score function of MSCLE would be a little different from Eq.~\ref{eq:score_S} 
+\section{Model misspecificated estimator}
+
+When the model is misspecificated, the score function of MSCLE would be a little different from Eq.~\eqref{eq:score_S} 
 since we have to calculate the expection $\bapi(\x, y) = \int f(y \mid \x,\btheta) \pi(\x, y)$, which depends on the assumption of $\ell$.
-Thus, the score function of MSCLE under model misspecification is 
+Thus, we assume that the score function of MSCLE under model misspecification is 
 \begin{align}
-    \psi_{SM}(\btheta; \x_i, y_i, \delta_i) = \delta_i [ \dot{\ell}(y_i \mid \x_i,\btheta) -  E^w\{ \dot{\ell}(y_i \mid \x_i,\btheta) \mid \x_i, y_i, \delta_i=1\} ],
+    \psi_{SM}(\btheta; \x_i, y_i, \delta_i) = \delta_i [\dl(y_i \mid \x_i,\btheta) -  \frac{E^w\{ \dl (y_i \mid \x_i,\btheta) \pi(y_i,\x_i;\btheta) \mid \x_i\}}{E^w\{ \pi(y_i,\x_i;\btheta) \mid \x_i\}}  ],
 \end{align}
 where $E^w$ is the expectation under the assumed working model.
-Since IPW and MSCLE converges to different parameter estimations, we 
-assume that IPW and MSCLE converages to $\btheta_l$ and $\btheta_{ls}$ respectively, which means $\btheta_{ls}$ is the solution of the following estimation equation \citep{wang2022maximum}
+Also, the MSCLE estimator is the solution of the following estimation equation \citep{wang2022maximum}
 \begin{align}
-    E^t[\psi_{SM}(\btheta; \x, y, \delta)] = 0,
+    \Exp^t[\psi_{SM}(\btheta; \x, y, \delta)] = 0,
 \end{align}
 or
     \begin{align}
-        \E^t \left\{ \E^t \left[ \dl(\btheta_{ls}; \x, y) \pi(\x,y;\btheta) \right]  -\frac{\E^t \left[ \pi(\x,y;\btheta) \mid \x \right]}{\E^w \left[ \pi(\x,y;\btheta) \mid \x \right]} \E^w \left[ \dl(\btheta_{ls}; \x, y) \pi(\x,y;\btheta) \right] \right\} = 0,
+        \Exp^t \left\{ \Exp^t \left[ \dl(\btheta_; \x, y) \pi(\x,y;\btheta) \right]  -\frac{\Exp^t \left[ \pi(\x,y;\btheta) \mid \x \right]}{\Exp^w \left[ \pi(\x,y;\btheta) \mid \x \right]} \Exp^w \left[ \dl(\btheta; \x, y) \pi(\x,y;\btheta) \right] \right\} = 0,
     \end{align}
-    where we use $\E^t$ to emphasize that the expectation is taken with respect to the true data
-    distribution.
-Under the model misspecification, the variance- correlation matrixs of MSCLE should be different.
-%Another difference is that $\hV_H$ has the different structure and should be more complicated. 
-%In this case, we use the influence function to calculation the $\hV_H$ and calculation of variance matrixs are also derived.
-
-We expand the Taylor expression of the score function of 
-MSCLE, resulting in that 
-\begin{equation*}
-       0 = \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) + \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) \right] \sqrt{N} (\htheta_S - \btheta_{ls}) + R_N,  
-\end{equation*}
-where 
-\begin{equation*}
-    R_N = \frac{1}{2} \sqrt{N} (\htheta_S - \btheta_{ls}) \left[\frac{1}{N} \sum_{i=1}^{N} \nabla^2_{\btheta} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) \right] (\htheta_S - \btheta_{ls})^\top + \op.
-\end{equation*}
-With the Assumption 1(2), we can prove that 
-\begin{equation*}
-    R_N \leq \frac{1}{N} d ||\htheta_S - \btheta_{ls}|| = \op.
-\end{equation*}
-Also we have
+For the IPW estimator, it is the same as that of the full data MLE and be solved through the function of 
 \begin{align}
-    B_{SM} = \Var (\psi_{SM} (\btheta; \x, y, \delta)^ {\otimes 2}) = \E^t [\delta (\dl(y \mid \x,\btheta) -  E^w\{ \dl(y \mid \x,\btheta) \mid \x, y, \delta \})^{\otimes 2} ],
+    \Exp^t [\dl (\btheta; \x,y)]=0,
 \end{align}
-where $A ^{\otimes 2} =AA^\top$.
-Then with the Assumption 2(1), let $A_{SM}^{-1} B_{SM} A_{SM}^{-1} = \Sigma_{SM}^{-1}$
-\begin{equation*}
-    \sqrt{N} (\htheta_S - \btheta_{ls}) \xrightarrow{d} N(0, \Sigma_{SM}^{-1}),
-\end{equation*}
-while for IPW, we assume that the the asymptotic property is that 
-\begin{equation*}
-    \sqrt{N} (\htheta_W - \btheta_l) = \xrightarrow{d} N(0, \Sigma_W^{-1}),
-\end{equation*}
-where $\Sigma_W^{-1} = A_{W}^{-1} B_{W} A_{W}^{-1} = \E^t[\dl ^{\otimes 2} (\btheta;,\x,y)] ^{-1} \E\left\{ \frac{\dl ^{\otimes 2} (\btheta;,\x,y)}{\pi(\x,y)}\right\} \E^t[\dl ^{\otimes 2} (\btheta;,\x,y)]^{-1}$ and
-$B_{W} = \E[\frac{\dl^{\otimes 2} (\btheta; \x, y)}{\pi(\x, y)}]$.
+where we use $\Exp^t$ to emphasize that the expectation is taken with respect to the true data
+distribution.
+Since IPW and MSCLE converges to different parameter estimations, we 
+assume that IPW and MSCLE converages to $\btheta_l$ and $\btheta_{ls}$ respectively. 
 
-Otherwise, if the model is misspecified, then as $n \to \infty$, $P(H_N \geq c_\alpha) \to 1$, and $\htheta_N$ converges asymptotically to the IPW estimator.
-We prove the following lemma.
-\begin{lemma}\label{le:mis_conv}
-    When the model is misspecificated, and the difference between IPW and MSCLE is $O_{P}(1/\sqrt{N})$, then we have $\htheta_N \xrightarrow{p} \htheta_W$.
+We first discuss the asymptotic Properties of $\htheta_W$ and $\htheta_{SM}$ under model misspecification.
+We establish the consistency and asymptotic normality of both estimators using the framework of \citet{hjort2011asymptotics}.
+A key advantage of this approach is that it does not require the 
+assumed model to be correctly specified: the results hold with the pseudo-true values $\btheta_l$ and $\btheta_{ls}$ replacing the true parameter $\btheta_0$.
+\begin{theorem}
+    \begin{align}
+        \sqrt{N}(\htheta_W - \btheta_l) \xrightarrow{d} \N(0, \Sigma_W^{-1}),
+    \end{align}
+    where $\Sigma_W^{-1} = A_W^{-1} B_W A_W^{-\top}$ with $B_W = \Exp[\psi_W(\btheta_l; \x, y,\delta) \psi_W(\btheta_l; \x, y,\delta)^\top]$, 
+    and
+    \begin{align}
+        \sqrt{N}(\htheta_S - \btheta_{ls}) \xrightarrow{d} \N(0,  \Sigma_{SM}^{-1}),
+    \end{align}
+    where $\Sigma_{SM}^{-1} = A_{SM}^{-1} B_{SM} A_{SM}^{-\top}$ with $B_{SM} = \Exp[\psi_{SM}(\btheta_{ls}; \x, y,\delta) \psi_{SM}(\btheta_{ls}; \x, y,\delta)^\top]$.
+    Here, $A_W = \Exp[\nabla_{\btheta} \psi_W(\btheta_l; \x, y,\delta)]$, $A_{SM} = \Exp[\nabla_{\btheta} \psi_{SM}(\btheta_{ls}; \x, y,\delta)]$.
+\end{theorem}
+As applied in the Theorem~1 by \citet{wang2022maximum}, the consistency and asymptotic normality of $\htheta_W$ and $\htheta_S$ follow from the Basic Corollary of \citet{hjort2011asymptotics}, which applies under possible model misspecification since the convex minimization framework does not require the model to be correctly specified.
+
+    
+Under the model misspecification, the variance-correlation matrices should also be different and we tend to present the asymptotic order of estimation of variance-correlation matrices. 
+%Another difference is that $\hV_H$ has the different structure and should be more complicated. 
+%In this case, we use the influence function to calculation the $\hV_H$ and calculation of variance matrices are also derived.
+We assume that $A_{\mathcal{T}} = \Exp [ \nabla_{\btheta} \psi_{\mathcal{T}} (\btheta_{\mathcal{T}}; \x, y, \delta)]$, where $\mathcal{T} = \{W, SM\}$ and $\btheta_{\mathcal{T}} = \{\btheta_l, \btheta_{ls}\}$.
+Let 
+\begin{equation*}
+    \hat{A}_{\mathcal{T}} = \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_{\mathcal{T}} (\htheta_{\mathcal{T}}; \x_i, y_i, \delta_i),
+\end{equation*}
+we first prove the following lemma.
+\begin{lemma}\label{asym_AW}
+    $\hat{A}_{\mathcal{T}} \cvp A_{\mathcal{T}}$.
 \end{lemma}
 
 \begin{proof}
-We first assume that under the model misspecification, the IPW and MSCLE converge to different parameter value,
+    Let $\bar{A}_{\mathcal{T}}(\btheta) = \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_{\mathcal{T}} (\btheta; \x_i, y_i, \delta_i)$, then $\hat{A}_{\mathcal{T}} = \bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}})$.
+    We have 
+    \begin{equation*}
+        \hat{A}_{\mathcal{T}} - A_{\mathcal{T}} = [\bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}}) - \bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}})] + [\bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}}) - A_{\mathcal{T}}].
+    \end{equation*}
+    With the Assumption 1(1), we prove that $\bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}}) \cvp A_{\mathcal{T}}$ via the law of large numbers. Next, we show that $\|\bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}}) - \bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}})\| \cvp 0$.
+    To this end, we apply a Taylor expansion to each component of the derivative matrix  $\nabla_{\btheta} \psi_{\mathcal{T}} (\htheta_{\mathcal{T}}; \x_i, y_i, \delta_i)$ around $\btheta_{\mathcal{T}}$. Then for each component, we obtain
+    \begin{equation*}
+        [\nabla_{\btheta} \psi_{\mathcal{T}} (\htheta_{\mathcal{T}}; \x_i, y_i, \delta_i)]_{j,k} = [\nabla_{\btheta} \psi_{\mathcal{T}} (\btheta_{\mathcal{T}}; \x_i, y_i, \delta_i)]_{j,k} + [\nabla_{\btheta}^2 \psi_{\mathcal{T}} (\tilde{\btheta}_i; \x_i, y_i, \delta_i)]_{j,k} (\htheta_{\mathcal{T}} - \btheta_{\mathcal{T}}),
+    \end{equation*}
+    where $\tilde{\btheta}_i$ lies on the segment between 
+    $\htheta_{\mathcal{T}}$ and $\btheta_{\mathcal{T}}$
+    Thus,
+    \begin{align*}
+        \|\bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}}) - \bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}})\| &\leq \|\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta}^2 \psi_{\mathcal{T}} (\tilde{\btheta}_i; \x_i, y_i, \delta_i)\| \|\htheta_{\mathcal{T}} - \btheta_{\mathcal{T}}\| \notag \\
+        \leq \frac{1}{N} \sum_{i=1}^{N} B(\x_i, y_i) \|\htheta_{\mathcal{T}} - \btheta_{\mathcal{T}}\|.
+    \end{align*}
+    With the Assumption 1(2), we have $\frac{1}{N} \sum_{i=1}^{N} B(\x_i, y_i) \cvp \Exp[B(\x_i, y_i)] < \infty$ and $\|\htheta_{\mathcal{T}} - \btheta_{\mathcal{T}}\| = \op$. Then, we can prove that $\|\bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}}) - \bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}})\| \cvp 0$.
+    Combining the two part above, we can finish the proof. 
+\end{proof}
+% According to the Assumpution 1(1), , with the large law of number, we have 
+% \begin{equation*}
+%     \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_{\mathcal{T}}; \x_i, y_i, \delta_i) \cvp A_W,
+% \end{equation*}
+% and 
+% \begin{equation*}
+%     \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_{\mathcal{T}}; \x_i, y_i, \delta_i) \cvp A_S.
+% \end{equation*}
+Besides,
+we assume that
+\begin{equation*}
+    \hat{B}_{\mathcal{T}_1 \mathcal{T}_2} = \hat{B}_{\mathcal{T}_1 \mathcal{T}_2}\left [\frac{1}{N} \sum_{i=1}^{N} \psi_{\mathcal{T}_1} (\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \right] \left[\frac{1}{N} \sum_{i=1}^{N} \psi_{\mathcal{T}_2} (\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i) \right]^\top,
+\end{equation*}
+where $\mathcal{T}_1, \mathcal{T}_2$ can choose from the index set $W, SM$,
+and 
+\begin{equation*}
+    B_{\mathcal{T}_1 \mathcal{T}_2} = \Exp [\psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x, y, \delta) \psi_{\mathcal{T}_2} (\btheta_{\mathcal{T}_2}; \x, y, \delta)^\top].
+\end{equation*}
+We denote that $B_{\mathcal{T}_1 \mathcal{T}_1} = B_{\mathcal{T}_1}$ and $B_{\mathcal{T}_2 \mathcal{T}_1} = B_{\mathcal{T}_2}$ for simplify.
+Then we have
+\begin{lemma}\label{asym_BW}
+    $\hat{B}_{\mathcal{T}_1 \mathcal{T}_2} \cvp B_{\mathcal{T}_1 \mathcal{T}_2}$.
+\end{lemma}
+
+\begin{proof}
+    The proof idea is similar with the former one. We also set a middle item $\bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\htheta_1, \htheta_2) $ $= \frac{1}{N} \sum_{i=1}^{N} \psi_{\mathcal{T}_1}(\htheta_1; \x_i, y_i, \delta_i) \psi_{\mathcal{T}_2} (\htheta_2; \x_i, y_i, \delta_i)^\top$.
+    So we can divide the difference of $\hat{B}_{\mathcal{T}_1 \mathcal{T}_2}$ and $B_{\mathcal{T}_1 \mathcal{T}_2}$ into two items,
+    \begin{equation*}
+        \hat{B}_{\mathcal{T}_1 \mathcal{T}_2} - B_{\mathcal{T}_1 \mathcal{T}_2} = [\bar{B}_{\mathcal{T}_1 \mathcal{T}_2} (\btheta_{\mathcal{T}_1}, \btheta_{\mathcal{T}_2}) - \bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\btheta_{\mathcal{T}_1}, \btheta_{\mathcal{T}_2})] + [\bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\btheta_{\mathcal{T}_1}, \btheta_{\mathcal{T}_2}) - B_{\mathcal{T}_1 \mathcal{T}_2}].
+    \end{equation*}
+
+    Since $\psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top$ is i.i.d random matrix, then with the Cauchy-Schwarz inequation and Assumption A(1) that $\Exp \|\psi_{\mathcal{T}} (\btheta_{\mathcal{T}}; \x, y, \delta)\|^4 < \infty$,
+    we can prove that $\bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\btheta_{\mathcal{T}_1}, \btheta_{\mathcal{T}_2}) \cvp B_{\mathcal{T}_1 \mathcal{T}_2}$ with the large number of law. 
+
+    For the second part, we also divide the derivative matrix $\bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\htheta_1, \htheta_2)$ into three parts and prove that these three parts convergences to $0$ respectively.
+    \begin{align*}
+        & \psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \psi_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top -  \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top \notag \\
+        &= [\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)] \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top \notag \\
+        &+ \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) [\psi_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top] \notag \\
+        &+ [\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)] [\psi_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top] .
+    \end{align*}
+
+    For the first part, according to the Assumption 1(1) and (2),
+    \begin{equation*}
+        \|\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)\| \leq \|B(\x, y)\| \|\htheta_{\mathcal{T}_1} - \btheta_{\mathcal{T}_1}\|.
+    \end{equation*}
+    Thus, 
+    \begin{align*}
+        & \|\frac{1}{N} \sum_{i=1}^{N} [\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}({\mathcal{T}_1}; \x_i, y_i, \delta_i)] \psi_{\mathcal{T}_2}({\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top\| \notag \\
+        &\leq \frac{1}{N} \sum_{i=1}^{N} \|\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}({\mathcal{T}_1}; \x_i, y_i, \delta_i)\| \cdot \|\psi_{\mathcal{T}_2}({\mathcal{T}_2}; \x_i, y_i, \delta_i)\| \notag \\
+        &\leq \|\htheta_{\mathcal{T}_1} - \btheta_{\mathcal{T}_1}\| \cdot \|B(\x, y)\| \frac{1}{N} \sum_{i=1}^{N} \|\psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)\|.
+    \end{align*}
+    According to Assumption 1(1), $\frac{1}{N} \sum_{i=1}^{N} \|\psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)\| \cvp \Exp[\|\psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x, y, \delta)\|] < \infty$.
+    Besides, we also have $\|B(\x, y)\|$ is bounded through the Assumption A(2) and $\|\htheta_{\mathcal{T}}-\btheta_{\mathcal{T}}\| = \op$, which complete the proof that the first part converges to $0$. 
+    Similarly, we can also prove that the second part also converges to $0$.
+
+    For the third part, 
+    \begin{align*}
+        & \|\frac{1}{N} \sum_{i=1}^{N} [\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)] [\psi_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top]\| \notag \\
+        &\leq \frac{1}{N} \sum_{i=1}^{N} \|\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)\| \cdot \|\psi_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top\| \notag \\
+        &\leq \|\htheta_{\mathcal{T}_1} - \btheta_{\mathcal{T}_1}\| \cdot \|\htheta_{\mathcal{T}_2} - \btheta_{\mathcal{T}_2}\| \frac{1}{N} \sum_{i=1}^{N} B^2(\x, y) \notag \\
+        & \sim \op \op \Op =\op.
+    \end{align*}
+    We combine all three parts and complete the proof.
+\end{proof}
+
+As long as $A_{\mathcal{T}}$ is nonsingular, 
+since $(\hat{A}_W, \hat{B}_W, \hat{A}_W) \cvp (A_W, B_W, A_W)$ by Lemmas~\ref{asym_AW} and~\ref{asym_BW}, the CMT gives
+\begin{align}
+    \hat{\Sigma}_W^{-1} &= \hat{A}_W^{-1} \hat{B}_W \hat{A}_W^{-\top} \cvp A_W^{-1} B_W A_W^{-\top} = \Sigma_W^{-1}.
+\end{align}
+The same argument also can apply to the estimator of $\Sigma_{SM}^{-1}$ and $V_H$.
+The estimator of $\hV_H$ is also different from the situation of correct model assumption that $\hV_H = \hat{\Sigma}_W^{-1} + \hat{\Sigma}_{SM}^{-1} - 2 N \Cov(\htheta_W, \htheta_S)$.
+Similarly, we have
+\begin{align}
+    C_{WS} = N \Cov(\htheta_W, \htheta_S) \xrightarrow{d} \hat{A}_{W}^{-1} \hat{B}_{WS} \hat{A}_{SM}^{-\top} = \hat{C}_{WS},
+\end{align}
+Since we assume that $V_H$ is positive definite, the matrix inverse is also continuous at $V_H$, whence $\hV_H^{-1} \cvp \Sigma_W^{-1} + \Sigma_{SM}^{-1} - 2 A_{W}^{-1} B_{WS} A_{SM}^{-\top} = V_H^{-1}$.
+% We expand the Taylor expression of the score function of 
+% MSCLE, resulting in that 
+% \begin{equation*}
+%        0 = \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) + \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) \right] \sqrt{N} (\htheta_S - \btheta_{ls}) + R_N,  
+% \end{equation*}
+% where 
+% \begin{equation*}
+%     R_N = \frac{1}{2} \sqrt{N} (\htheta_S - \btheta_{ls}) \left[\frac{1}{N} \sum_{i=1}^{N} \nabla^2_{\btheta} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) \right] (\htheta_S - \btheta_{ls})^\top + \op.
+% \end{equation*}
+% With the Assumption 1(2), we can prove that 
+% \begin{equation*}
+%     R_N \leq \frac{1}{N} d \|\htheta_S - \btheta_{ls}\| = \op.
+% \end{equation*}
+% Also we have
+% \begin{align}
+%     B_{SM} = \Var (\psi_{SM} (\btheta; \x, y, \delta)^ {\otimes 2}) = \Exp^t [\delta (\dl(y \mid \x,\btheta) -  E^w\{ \dl(y \mid \x,\btheta) \mid \x, y, \delta \})^{\otimes 2} ],
+% \end{align}
+% where $A ^{\otimes 2} =AA^\top$.
+% Then with the Assumption 2(1), let $A_{SM}^{-1} B_{SM} A_{SM}^{-1} = \Sigma_{SM}^{-1}$
+% \begin{equation*}
+%     \sqrt{N} (\htheta_S - \btheta_{ls}) \xrightarrow{d} N(0, \Sigma_{SM}^{-1}).
+% \end{equation*}
+% For IPW, since the score function is same as that under the correctly specified model, we still adopt its asymptotic property, which is
+% \begin{equation*}
+%     \sqrt{N} (\htheta_W - \btheta_l)  \xrightarrow{d} N(0, \Sigma_W^{-1}),
+% \end{equation*}
+% where $\Sigma_W^{-1} = A_{W}^{-1} B_{W} A_{W}^{-1} = \Exp^t[\dl ^{\otimes 2} (\btheta;,\x,y)] ^{-1} \Exp\left\{ \frac{\dl ^{\otimes 2} (\btheta;,\x,y)}{\pi(\x,y)}\right\} \Exp^t[\dl ^{\otimes 2} (\btheta;,\x,y)]^{-1}$ and
+% $B_{W} = \Exp[\frac{\dl^{\otimes 2} (\btheta; \x, y)}{\pi(\x, y)}]$.
+
+\begin{remark}
+The consistency of $\hV_H^{-1}$ is essential for the asymptotic distribution of the test statistic $H_N = N(\htheta_W - \htheta_S)^\top \hV_H^{-1}(\htheta_W - \htheta_S)$: by Slutsky's theorem, replacing the unknown $V_H$ with its consistent estimator $\hV_H$ does not affect the limiting chi-squared distribution established in Lemma~\ref{le:test stat}.
+\end{remark}
+
+Otherwise, under model misspecification with a fixed difference between $\btheta_l$ and $\btheta_{ls}$, the test statistic $H_N$ diverges, and the combined estimator $\htheta_{N}$ reduces asymptotically to the IPW estimator $\htheta_W$.
+\begin{lemma}\label{le:mis_conv}
+Suppose the model is misspecified in the sense that $\btheta_l \neq \btheta_{ls}$, where the difference $\btheta_l - \btheta_{ls}$ is a fixed nonzero constant. Then, under Assumption 1,
+    $H_N \xrightarrow{p} \infty, \text{and} \|\htheta_N - \htheta_W\| \cvp 0$.
+\end{lemma}
+
+\begin{proof}
+Under the stated conditions, both estimators are consistent for their respective pseudo-true values:
 \begin{align}
     \notag
     \sqrt{N} (\htheta_W - \btheta_l) & \xrightarrow{d} Z_W \sim N(0, \Sigma_{W}^{-1}), \\
     \sqrt{N} (\htheta_S - \btheta_{ls}) &\xrightarrow{d} Z_S \sim N(0, \Sigma_{SM}^{-1}).
 \end{align}
-We notice that when the difference $\htheta_W - \htheta_S$ has a order larger than $\frac{1}{\sqrt{N}}$, and 
-    % Based on the conclusion in \cite{van2000asymptotic}, IPW $\htheta_W$ is estimated by solving
-    % \begin{align}
-    %     \g_W(\htheta_W) &= \E^t \left\{ \psi_W (\htheta_W; \x, y, \delta) \right\} =  \E^t \left\{ \dl(\htheta_W; \x, y) \right\} = 0,
-    % \end{align}
-    % and MSCLE $\htheta_S$ is estimated by solving
-    % \begin{align}
-    %     \notag
-    %     \g_S(\htheta_S) &= \E^t \left\{ \E^t \left[ \dl(\htheta_S; \x, y) \pi(\x,y;\btheta_0) \right]  -\frac{\E^t \left[ \pi(\x,y;\btheta_0) \mid \x \right]}{\E^w \left[ \pi(\x,y;\btheta_0) \mid \x \right]} \E^w \left[ \dl(\htheta_S; \x, y) \pi(\x,y;\btheta_0) \right] \right\} \\
-    %     &= 0,
-    % \end{align}
-    % where we use $\E^t$ to emphasize that the expectation is taken with respect to the true data
-    % distribution and $\E^w$ is the expectation under the assumed working model and $\btheta_0$ is the fixed parameter in calculating the sampling probabilities. To estimate the distence between IPW and MSCLE, we use Taylor expansion, deriving that 
-    % \begin{align}
-    %     \htheta_S - \htheta_W &= \dot g_S(\htheta_W)^{-1} g_S(\htheta_W) + \Op.
-    % \end{align}
-    % Thus, in most cases, as long as $\htheta_W$ isn't the solution of $g_S(\btheta)$, then we have $\htheta_W \neq \htheta_S$.
-    %Under model misspecification, the asymptotic covariance matrix of $\sqrt{N} (\htheta_S - \htheta_W)$
-   %differs from the one under the null hypothesis, since the two estimators converge to distinct pseudo-true parameters. 
-   the divergence of the Hausman-type statistic and the consistency of the pre-test estimator remain valid provided that the covariance estimator $\Cov(\htheta_W, \htheta_S)$ is consistent and positive definite. Under these conditions, 
-   $\lN H_N = N (\htheta_S - \htheta_W) \hV_H^{-1} (\htheta_S - \htheta_W)^\top \xrightarrow{p} \infty$, which easily derives that $\I\{H_N \geq c_\alpha\} \xrightarrow{p} 1$. Thus we have $\htheta_S \I\{H_N < c_\alpha\} \xrightarrow{p} 0$, and we have $\htheta_N \xrightarrow{p} \htheta_W$.
+We notice that
+\begin{equation*}\label{eq:diff_order}
+    \htheta_W - \htheta_S \cvp \btheta_l - \btheta_{ls} \neq 0.
+\end{equation*}
+Substituting~\eqref{eq:diff_order} into the test statistic and using $\hV_H \cvp V_H$,
+\begin{align*}
+        H_N 
+        &= N(\htheta_W - \htheta_S)^\top 
+        \hV_H^{-1}(\htheta_W - \htheta_S) \\
+        &= N \left[(\btheta_l - \btheta_{ls}) 
+        + O_P(N^{-1/2}) \right]^\top
+        \left[V_H^{-1} + \op \right]
+        \left[(\btheta_l - \btheta_{ls}) 
+        + O_P(N^{-1/2})\right] \\
+        &= N (\btheta_l - \btheta_{ls})^\top 
+        V_H^{-1}(\btheta_l - \btheta_{ls}) 
+        + O_P(\sqrt{N}) \rightarrow \infty.
+    \end{align*} 
+As a result, $\I\{H_N \geq c_\alpha\} \xrightarrow{p} 1$ for any fixed threshold $c_\alpha > 0$. 
+We conclude that
+\begin{equation*}
+\|\htheta_{N} - \htheta_W\| \leq \underbrace{\I\{H_N < c_\alpha\}}_{\cvp\; 0}\cdot\underbrace{\|\htheta_S - \htheta_W\|}_{\Op} \cvp 0.            
+\end{equation*}
 \end{proof}
+
 
 {\color{red} \cite{leeb2005model} and \cite{leeb2008can} presented a conclusion that it is difficult or nearly impossible to obtain the uniform asymptotic normalityy of $\htheta_N$. No estimator can consistently estimate the unconditional distribution of the model-selected estimator, not even locally.
 One reason is that the asymptotic variances of $\htheta_S$ and $\htheta_W$ differ, and their centers slightly shift under local misspecification, the distribution of $\htheta_N$ often becomes multimodal. 
@@ -306,139 +434,155 @@ We have three kinds options to choose for $w(\cdot)$.
     \begin{itemize}
         \item [(1)] 
         $w(\cdot)$ is a measurable function with the value region of $[0,1]$. $w(\cdot)$ should be almost continuous function so that when $D_N \xrightarrow{d} D$, we have $w(D_N) \xrightarrow{d} w(D)$.
-%         \item [(2)] there exists an $\epsilon$, so that
-% \begin{equation*}
-%     \E^t[||\frac{\delta}{\pi} \dot{\ell}^w(\btheta; \x, y)||^{2+\epsilon}]< \infty,
-% \end{equation*}
-% and 
-% \begin{equation*}
-%     \E^t[||\delta (\dot{\ell}^w(\btheta; \x, y) - \nabla_{\btheta} \log \bapi(\x, y)) ||^{2+\epsilon}]< \infty.
-% \end{equation*}
-%     \item [(3)] As $N \rightarrow \infty$, $A_W = \lN \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta; \x_i, y_i, \delta_i)$  and $A_{SM} = \lN \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_{SM} (\btheta; \x_i, y_i, \delta_i)$ goes to a positive-definite matrix in probability.
+    \item [(2)] $A_W$ and $A_{SM}$ are nonsingular matrices.   
     \end{itemize}
 \end{assumption}
 For the assumption~(1), since we commonly consider $w(\cdot)$ as sigmoid or huber function, the condition is satisfied naturely.
-% Assumption~(2) These two equations present the moment conditions of score function under IPW and MSCLE, respectively.
-% Such assumption tends to garuentee that the fluctuations in the estimator at scale $\sqrt{N}$ will not produce a mass that escapes to infinity, so that we can have
-% \begin{align}
-%     \sup_{N} \E^t[||\sqrt{N} (\htheta_{NA} - \btheta_l)||^{2+\epsilon}] < \infty.
-% \end{align}
 
-As we discussed, IPW and MSCLE may converges to different value $\btheta_l$ and $\btheta_{ls}$. 
-We first consider the difference between $\btheta_l$ and $\btheta_{ls}$. When $\btheta_l - \btheta_{ls} = h$ where $h$ is a constant, then we have $\lN \htheta_W - \htheta_S = h$.
-As a result, $\lN H_N \rightarrow \infty$.
-Let $\Delta = \htheta_{NA}-\btheta_l$ and 
-\begin{equation*}
-    Z_W = \htheta_W-\btheta_l, \qquad Z_S = \htheta_S-\btheta_l,
-\end{equation*}
-as the Therome 4.1 in \citep{hjort2003frequentist} claimed, we calculate the MSE $R(h)$ to evaluate the variance of the estimator $\htheta_{NA}$ and the MSE is defined as 
-\begin{align}\label{eq:Rh}
-    \notag
-R(h) &= tr(\E(\Delta \Delta^\top)) = tr(\E[(w(H_N) Z_W + (1-w(H_N)) Z_S)^\top (w(H_N) Z_W + (1-w(H_N)) Z_S)]) \\
-&= (1-w(H_N))^2 ||h||^2 + \frac{1}{N} tr(w(H_N)^2 \Sigma_W^{-1} + w(H_N)(1-w(H_N)) \Sigma_{SM}^{-1} + tr(C_{WS})) \notag \\
-&\xrightarrow{N \rightarrow \infty} (1-w(H_N))^2 ||h||^2,
-\end{align}
-where $C_{WS}$ can be considered as $
-    \Cov(Z_W, Z_S) = \Cov(\htheta_W, \htheta_S) = A_W^{-1} B_{WS} A_{S}^{-1}$.
-As long as $\lN w(H_N) = 1$, then we can garuentee that $\lN R(h)=0$, while most of the $w(H_N)$ cases follows this requirement.
-Next we prove that $\btheta_{NA}$ is an unbiased estimator through
-\begin{align}
-   \lN \E(\htheta_{NA} - \btheta_l) = \lN \E[(w(H_N) Z_W + (1-w(H_N)) Z_S)] \rightarrow \lN \E[w(H_N) Z_W] = 0.
-\end{align}
+In the Lemma~\ref{le:mis_conv}, we discussed that IPW and MSCLE may converges to different value $\btheta_l$ and $\btheta_{ls}$. 
+\begin{itemize}
+    \item Case 1. $\btheta_l - \btheta_{ls} = h$.
+\end{itemize}
+Considering the Lemma~\ref{le:mis_conv} more generally, for any weight function satisfying 
+$w(h) \to 1$ as $h \to \infty$ (such as the sigmoid or the adaptive weight ), the same conclusion holds: $w(H_N) \cvp 1$ and hence 
+$\|\htheta_{NA} - \htheta_W\| \cvp 0$.
 
+\begin{itemize}
+    \item Case 2. $\|\btheta_l - \btheta_{ls}\| \leq \frac{M}{\sqrt{N}}$.
+\end{itemize}
 We next consider that the different between $\btheta_l$ and $\btheta_{ls}$ decreases as $N$ increases. 
-We assume that $||\btheta_l - \btheta_{ls}|| \leq \frac{M}{\sqrt{N}}$, which is bounded by a value with order of $N^{-1/2}$ and $\delta_N = \sqrt{N} (\btheta_l - \btheta_{ls})$ which is a bounded sequence.
-As a result, through Bolzano-Weierstrass Theorem, there exists a subsequence $\{N_{k}\}$ such that when $k \rightarrow \infty$, $\delta_{N_k}$ converages to a constant vector $\delta_s$ and $||\delta_s|| \leq M$.
-Thus let $D_N = \sqrt{N}(\htheta_S - \htheta_W)$.
+We assume that $\|\btheta_l - \btheta_{ls}\| \leq \frac{M}{\sqrt{N}}$, which is bounded by a value with order of $N^{-1/2}$ and $\delta_N = \sqrt{N} (\btheta_l - \btheta_{ls})$ which is a bounded sequence.
+As a result, through Bolzano-Weierstrass Theorem, there exists a subsequence $\{N_{k}\}$ such that when $k \rightarrow \infty$, $\delta_{N_k}$ converages to a constant vector $\delta_s$ and $\|\delta_s\| \leq M$.
+Thus let $D_N = \sqrt{N}(\htheta_W - \htheta_S)$.
  As a result, 
- \begin{align}
-   \sqrt{N_k}(\htheta_{W,N_k} - \htheta_{S,N_k}) \xrightarrow{d} D \sim \N(\delta_s, V_H),
+ \begin{align}\label{WS_Nk}
+   \sqrt{N_k}(\htheta_{W} - \htheta_{S}) \xrightarrow{d} D \sim \N(\delta_s, V_H).
  \end{align}
-where $V_H = \Sigma_W^{-1} + \Sigma_{SM}^{-1} - C_{WS} - C_{WS}^\top$ is the limitation correlation matrix of $\htheta_S - \htheta_W$.
 The Hausman statistic can be formulated as 
 \begin{equation*}
     H_N = D_N \hV_H^{-1} D_N^\top \xrightarrow{p} D V_H^{-1} D^\top \xrightarrow{d} \chi^2_{\lambda},
 \end{equation*}
-while the center value $\lambda  = \delta_s V_H^{-1} \delta_s^\top$ that can be bounded that
+while the center value $\lambda  = \delta_s^\top V_H^{-1} \delta_s$ that can be bounded that
 \begin{equation*}
-    \delta_s V_H^{-1} \delta_s^\top \leq \lambda_{\text{max}}(V_H^{-1}) M^2,
+    \delta_s^\top V_H^{-1} \delta_s \leq \lambda_{\text{max}}(V_H^{-1}) M^2,
 \end{equation*}
 where $\lambda_{\text{max}}(V_H^{-1})$ is the maximum eigenvalue of $V_H^{-1}$.
 
-On the other hand, the difference between to esitmator $\htheta_{NA}$ and $\btheta_l$ can be formulated as
-\begin{align}
-    &\Delta = \sqrt{N}(\htheta_{NA}-\btheta_l) \notag \\
-    &= \sqrt{N}[(w(H_N) (\htheta_W - \btheta_l) + (1-w(H_N)) (\htheta_S - \btheta_l))] = Z_W - (1-w(H_N))(Z_W -Z_S + \delta_N),
+Let $\Delta = \sqrt{N} (\htheta_{NA}-\btheta_l$) and 
+define $Z_{W,N} = \sqrt{N}(\htheta_{W} - \btheta_l) \xrightarrow{d} Z_W$.
+The joint convergence
+\begin{equation*}
+    (Z_{W,N},\, D_N) \xrightarrow{d} (Z_W,\, D) 
+    \sim \mathcal{N} \left(
+    \binom{0}{\delta_s},\;
+    \begin{pmatrix} 
+    \Sigma_W^{-1} & C_{WD} \\ C_{WD} & V_H 
+    \end{pmatrix}\right)
+\end{equation*}
+holds.
+% \begin{equation*}
+%     Z_W = \sqrt{N} (\htheta_W-\btheta_l), \qquad Z_S = \sqrt{N} (\htheta_S-\btheta_l).
+% \end{equation*}
+The difference between to esitmator $\htheta_{NA}$ and $\btheta_l$ can be formulated as
+\begin{align}\label{Delta}
+    &\lNk \Delta = \sqrt{N_k}(\htheta_{NA}-\btheta_l) \notag \\
+    &=\lNk \sqrt{N_k}[((\htheta_W - \btheta_l) + (1-w(H_N)) (\htheta_W - \htheta_S))] \\
+    &= \lNk Z_{W,N_k} - (1-w(H_N))D_{N_k},
 \end{align}
 where 
 \begin{equation*}
-    Z_W \sim \N(0, \Sigma_W^{-1}), \qquad
-    Z_W-Z_S \sim \N(\delta_s, V_H).
+    \lNk Z_{W,N_k} \sim \N(0, \Sigma_W^{-1}), \qquad
+    \lNk D_{N_k} \sim \N(\delta_s, V_H).
 \end{equation*}
+As the Therome 4.1 in \citep{hjort2003frequentist} claimed, we calculate the MSE $R(h)$ to evaluate the variance of the estimator $\htheta_{NA}$ and the MSE is defined as 
+\begin{align}\label{eq:Rh}
+R(w) &= tr(\Exp(\Delta \Delta^\top)) \notag \\
+& = \Exp[(Z_W + (1-w(H_N)) D_N)^\top (Z_W + (1-w(H_N)) D_N)]. 
+\end{align}
 
-As long as $w(H_N)$ is bounded, based on the consistency of IPW and MSCLE, $\htheta_{NA}$ also converages to $\theta_0$.
 Similar with the conclusion of Lemma~\ref{le:mis_conv}, we just have to study the property when the difference order is $O_{P}(1/\sqrt{N})$.
 We involve the concept of frequentist  model average (FMA), which established aunified framework to address the problems of model selection and model averaging. 
-
-To evaluate the efficiency of $R(h)$, we nex want to prove that $R(h)$ is bounded with respect to $h$, so that we can illustrate that the mixture estimator is superior than MSCLE. 
+To evaluate the efficiency of $R(h)$, we next want to prove that $R(h)$ is bounded with respect to $h$, so that we can illustrate that the mixture estimator is superior than MSCLE. 
 Then we have the following lemma:
-\begin{lemma}\label{R_formula}
-\begin{align}
-        \lim\limits_{N \rightarrow \infty} R &= tr(\Sigma_{W}^{-1}) + ||\delta_s||^2 tr (\E[(1 - w(\chi_{p+2}^2(\lambda)))^2] V_H) + ||\delta_s||^2 \E[(1 - w(\chi_{p+4}^2(\lambda)))^2] \notag \\ 
-        &+ ||\delta_s||^2 \E[(1 - w(\chi_{p+2}^2(\lambda)))] tr((C_{WD} + C_{WD}^\top)) \notag \\
-        &+ ||\delta_s||^2 \{\E[(1 - w(\chi_{p+4}^2(\lambda)))^2] - E[(1 - w(\chi_{p+2}^2(\lambda)))]\} tr((C_{WD} + C_{WD}^\top) V_H^{-1}).
+\begin{proposition}\label{R_formula}
+\begin{align}\label{eq:R_formula}
+        \lim\limits_{N \rightarrow \infty} R(w) &= tr(\Sigma_{W}^{-1}) + \|\delta_s\|^2 tr (\Exp[(1 - w(\chi_{p+2}^2(\lambda)))^2] V_H) + \|\delta_s\|^2 \Exp[(1 - w(\chi_{p+4}^2(\lambda)))^2] \notag \\ 
+        &+ 2 \|\delta_s\|^2 \Exp[(1 - w(\chi_{p+2}^2(\lambda)))] tr(C_{WD}) \notag \\
+        &+ 2 \|\delta_s\|^2 \{\Exp[(1 - w(\chi_{p+4}^2(\lambda)))^2] -  \Exp[(1 - w(\chi_{p+2}^2(\lambda)))]\} tr(C_{WD} V_H^{-1}).
 \end{align}
-{\color{red} Should I prove that $R \leq tr(\Sigma_{W}^{-1})$ for all $N$}
-\end{lemma}
+{\color{red} Can't prove that $R \leq tr(\Sigma_{W}^{-1})$ for all $N$ under this expression.}
+\end{proposition}
 
 \begin{proof}
-    We first calculate the limit of $w(\chi_{p+2}^2(\lambda))$.
-    We already knows that $\frac{\chi^2(\lambda)}{\lambda} \xrightarrow{p} 1$ as $\lambda \rightarrow \infty$ and when $ \delta_s \rightarrow \infty$, we have $\lim\limits_{\delta_s \rightarrow \infty} \lambda = \lim\limits_{\delta_s \rightarrow \infty} \delta_s V_H^{-1}\delta_s^\top \xrightarrow{p} \infty$.
-    Plus, since $w(\lambda) \in [0,1]$,
-    thus we have $\lim\limits_{\lambda \rightarrow \infty} w(\chi^2(\lambda)) \rightarrow 1$.
-    Based on the dominated convergence theorem, we have $\lim\limits_{h \rightarrow \infty} \E[w(\chi_{p+2}^2(\lambda))] \xrightarrow{p} 1$.
+  
+% According to Eq.~\eqref{Delta} and the assumption on $w(\cdot)$, i.e., $w(\cdot)$ is almost continuous on $[0,1]$ under sigmoid smoothing and adaptive weighting, we can prove that $N \Delta \Delta^\top$ is a continuous function of $\htheta_W$ and $\htheta_S$, and consequently $N \Delta \Delta^\top$ converges to a random variable.
+Since $|\btheta_l - \btheta_{ls}| \leq \frac{M}{\sqrt{N}}$ and $w(H_N)\in [0,1]$, we have $N \operatorname{tr}(\Delta \Delta^\top) = \Op$. Thus
+\begin{equation}
+\sup_{N} \Exp[N \operatorname{tr}(\Delta \Delta^\top) ] < \infty,
+\end{equation}
+which satisfies the uniform integrability condition.
+By the Lebesgue dominated convergence theorem, we obtain
+\begin{equation}
+\lim\limits_{N \rightarrow \infty} R = \Exp \left[\lim\limits_{N \rightarrow \infty} \operatorname{tr}(N \Delta \Delta^\top)\right].
+\end{equation}
+Similar to Eq.~\eqref{eq:Rh}, this expression can be decomposed into four parts.
 
-    Assume that $D_h = V_H^{-1/2}(D-h)$, then $H_N = ||D_h||^2$ and $Q = V_H^{1/2} \E(w( ||D_h||^2)^2  ||D_h||^2) V_H^{1/2}$, where $D_h$ follows a normal distribution with mean of $V_H^{-1/2}h$ and variance of $\I_p$.
+    % We first calculate the limit of $w(\chi_{p+2}^2(\lambda))$.
+    % We already knows that $\frac{\chi^2(\lambda)}{\lambda} \xrightarrow{p} 1$ as $\lambda \rightarrow \infty$ and when $ \delta_s \rightarrow \infty$, we have $\lim\limits_{\delta_s \rightarrow \infty} \lambda = \lim\limits_{\delta_s \rightarrow \infty} \delta_s V_H^{-1}\delta_s^\top \xrightarrow{p} \infty$.
+    % Plus, since $w(\lambda) \in [0,1]$,
+    % thus we have $\lim\limits_{\lambda \rightarrow \infty} w(\chi^2(\lambda)) \rightarrow 1$.
+    % Based on the dominated convergence theorem, we have $\lim\limits_{h \rightarrow \infty} \Exp[w(\chi_{p+2}^2(\lambda))] \xrightarrow{p} 1$.
+
+    We first calculate the expectation of the function of $\htheta_W - \htheta_S$, which is shown in the item $w(H_N)$ and $Z_W-Z_S$. 
+    According to Eq.~\eqref{WS_Nk}, there exists a subsequence ${N_k}$ so that $\lNk (\htheta_{W,N_k} - \htheta_{S,N_k}) \xrightarrow{d} D$.
+    Assume that $D_\delta = V_H^{-1/2}(D- \delta_s)$, then $H_N = \|D_\delta\|^2$ and 
+    \begin{equation*}
+        \Exp[tr (w(H_N)^2 (\htheta_W-\htheta_S) (\htheta_W-\htheta_S)^\top)] = tr (V_H^{1/2} \Exp(w^2( \|D_\delta\|^2)  \|D_\delta\|^2) V_H^{1/2}),
+    \end{equation*}
+    where $D_\delta$ follows a normal distribution with mean of $V_H^{-1/2}h$ and variance of $\I_p$.
 Based on the lemma of non-center chi-square distribution, we have
 \begin{equation*}
-    \E(w(||D_h||^2)D_h) = V_H^{-1/2} h \E(w(\chi_{p+2}^2(\lambda))),
+    \Exp(w(\|D_\delta\|^2)D_\delta) = V_H^{-1/2} \delta_s \Exp(w(\chi_{p+2}^2(\lambda))),
 \end{equation*}
 and 
 \begin{equation*}
-    \E(w(||D_h||^2)||D_h||^2) = \E(w(\chi_{p+2}^2(\lambda))) \I_p + \E(w(\chi_{p+4}^2(\lambda))) V_H^{-1/2} hh^\top V_H^{-1/2},
+    \Exp(w(\|D_\delta\|^2)D_\delta D_\delta^\top) = \Exp(w(\chi_{p+2}^2(\lambda))) \I_p + \Exp(w(\chi_{p+4}^2(\lambda))) V_H^{-1/2} \delta_s \delta_s^\top V_H^{-1/2},
 \end{equation*} 
-where $\lambda$ is non-center parameter and $\lambda = h^\top V_H^{-1} h$ in our concept.
-
+where $\lambda$ is non-center parameter and $\lambda = \delta_s^\top V_H^{-1} \delta_s$ in our concept.
+Then
+\begin{align}\label{Echi}
+    \Exp[tr (w(H_N)^2 (\htheta_W-\htheta_S) (\htheta_W-\htheta_S)^\top)] &= tr (\Exp [w^2(\chi_{p+2}^2(\lambda))] V_H + \Exp[ w^2(\chi_{p+4}^2(\lambda))] \delta_s \delta_s^\top).
+\end{align}
  
-    We now divide $R(\delta_s)$ into four items. 
+    We now divide $R$ into four items. 
     The first item is 
     \begin{align}
-        \lim\limits_{N_k \rightarrow \infty} \E(Z_{W, N_k}^2) = \Sigma_{W, N_k}^{-1},
+        \lim\limits_{N_k \rightarrow \infty} tr (\Exp(Z_{W, N_k}^2)) = tr (\Sigma_{W}^{-1}),
     \end{align}
     which can be proved derictly through the conclusion of IPW.
 
     The second item is 
     \begin{align}
         \notag
-        & \lim\limits_{N_k \rightarrow \infty} \E((1- w(H_{ N_k}))^2 (Z_{S, N_k}-Z_{W, N_k} - \delta_s) (Z_{S, N_k}-Z_{W, N_k} - \delta_s)^\top) \\
+        & \lim\limits_{N_k \rightarrow \infty} tr (\Exp((1- w(H_{ N_k}))^2 (Z_{S, N_k}-Z_{W, N_k} - \delta_s) (Z_{S, N_k}-Z_{W, N_k} - \delta_s)^\top)) \\
         \notag
-        & = V_H^{1/2} (\E[(1 - w(\chi_{p+2}^2(\lambda)))^2] \I_p + \E[(1 - w(\chi_{p+4}^2(\lambda)))^2] V_H^{-1/2} \delta_s \delta_s^\top V_H^{-1/2}) V_H^{1/2} 
+        & = tr (V_H^{1/2} (\Exp[(1 - w(\chi_{p+2}^2(\lambda)))^2] \I_p + \Exp[(1 - w(\chi_{p+4}^2(\lambda)))^2] V_H^{-1/2} \delta_s \delta_s^\top V_H^{-1/2}) V_H^{1/2}) 
         \\
         \notag
-        &= \E[(1 - w(\chi_{p+2}^2(\lambda)))^2] V_H + \E[(1 - w(\chi_{p+4}^2(\lambda)))^2] ||\delta_s||^2.
+        &= \Exp[(1 - w(\chi_{p+2}^2(\lambda)))^2] tr (V_H) + \Exp[(1 - w(\chi_{p+4}^2(\lambda)))^2] \|\delta_s\|^2.
     \end{align}
 
     For the third item, we have to prove that
     \begin{align}
         \notag  
-        & \lim\limits_{N_k \rightarrow \infty} \E[(1-w(H_{N_k})) Z_{W, N_k}(Z_{S, N_k} - Z_{W, N_k}- \delta_s)^\top] \\
-        &= \E[ (1-w(||D_{\delta_s}||^2)) C_{WD} V_H^{-1} (D_{\delta_s} + \delta_s) D_{\delta_s}^\top ],
+        & \lim\limits_{N_k \rightarrow \infty} tr( \Exp[(1-w(H_{N_k})) Z_{W, N_k}(Z_{S, N_k} - Z_{W, N_k}- \delta_s)^\top] ) \\
+        &= tr (\Exp[ (1-w(\|D_\delta\|^2)) C_{WD} V_H^{-1} (D_\delta + \delta_s) D_\delta^\top ]),
     \end{align}
-We first consider the joint distribution of $Z_W$ and $D_h$, we have 
+We first consider the joint distribution of $Z_W$ and $D_\delta$, we have 
 \begin{align}
     \begin{pmatrix}
         Z_W \\
-        D_h
+        D_\delta
     \end{pmatrix}
     \sim N\left(\begin{pmatrix}
         0 \\
@@ -450,107 +594,292 @@ We first consider the joint distribution of $Z_W$ and $D_h$, we have
     \end{pmatrix}\right),
 \end{align}
 where $C_{WD} = \Sigma_W^{-1} - C_{WS}$.
-Then based on the conditional property of multinormal distribution, we can turn $Z_W$ to $Z_W = C_{WD} V_H^{-1} (D_h + h) +\epsilon$, where $\epsilon$ is a standard normal variable which is independce with $D$. 
-As a result, the third item in Eq.~\ref{eq:rh} can be formulated as 
+Then based on the conditional property of multinormal distribution, we can turn $Z_W$ to $Z_W = C_{WD} V_H^{-1} (D_\delta + h) +\epsilon$, where $\epsilon$ is a standard normal variable which is independce with $D$. 
+As a result, the third item in Eq.~\eqref{eq:Rh} can be formulated as 
 \begin{align}
     \notag
-    &\E(w(H_N)(Z_W(Z_S-Z_W-h)^\top))\\
-    &= C_{WD}V_H^{-1} \E[w(||D_h||^2) (D_h + h) D_h^\top] \notag \\
-    &= C_{WD}V_H^{-1} \E[w(||D_h||^2)] (||D_h||^2 + h D_h^\top) \notag \\
-    &= C_{WD}V_H^{-1} [V_H \E[(1 - w(\chi_{p+2}^2(\lambda)))] \I_p + \E[(1 - w(\chi_{p+4}^2(\lambda)))] hh^\top ]  \notag\\
-    &- C_{WD}V_H^{-1} [hh^\top \E((1- w(\chi_{p+2}^2(\lambda))))]  \notag \\
-    &= C_{WD} \E[(1 - w(\chi_{p+2}^2(\lambda)))] + C_{WD}V_H^{-1} hh^\top [\E[(1 - w(\chi_{p+4}^2(\lambda)))^2] - E[(1 - w(\chi_{p+2}^2(\lambda)))]].
+    &tr (\Exp(w(H_N)(Z_W(Z_S-Z_W - \delta_s)^\top)))\\
+    &= tr (C_{WD}V_H^{-1} \Exp[w(\|D_\delta\|^2) (D_\delta + \delta_s) D_\delta^\top]) \notag \\
+    &= tr (C_{WD}V_H^{-1} \Exp[w(\|D_\delta\|^2)] (\|D_\delta\|^2 + \delta_s D_\delta^\top)) \notag \\
+    &= tr (C_{WD}V_H^{-1} \{V_H \Exp[(1 - w(\chi_{p+2}^2(\lambda)))]  + \Exp[(1 - w(\chi_{p+4}^2(\lambda)))] hh^\top \})  \notag\\
+    &- tr (C_{WD}V_H^{-1} [hh^\top \Exp((1- w(\chi_{p+2}^2(\lambda))))])  \notag \\
+    &= tr (C_{WD}) \Exp[(1 - w(\chi_{p+2}^2(\lambda)))] \notag \\
+    &+ tr (C_{WD}V_H^{-1}) hh^\top [\Exp[(1 - w(\chi_{p+4}^2(\lambda)))^2] - E[(1 - w(\chi_{p+2}^2(\lambda)))]].
 \end{align}
 Thus, we complete the proof.
 \end{proof}
 
-Besides, we can also proof that when $|\delta_s||$ goes to infinity, the MSE of $\htheta_{NA}$ still converges to the one of IPW, showing the robustness of such estimator. 
-For the second item, since $1 - w(\chi_{p+2}^2(\lambda)) \xrightarrow{p} 0$, then $V_H^{1/2} (\E[(1 - w(\chi_{p+2}^2(\lambda)))^2] \I_p) \rightarrow 0$. 
+Besides, we can also proof that when $\|\delta_s\|$ goes to infinity, the MSE of $\htheta_{NA}$ still converges to the one of IPW, showing the robustness of such estimator. 
+For the second item, since $1 - w(\chi_{p+2}^2(\lambda)) \xrightarrow{p} 0$, then $V_H^{1/2} (\Exp[(1 - w(\chi_{p+2}^2(\lambda)))^2] \I_p) \rightarrow 0$. 
 We also have 
     \begin{align}
-        V_H^{1/2} \E[(1 - w(\chi_{p+4}^2(\lambda)))^2] V_H^{-1/2} ||\delta_s||^2 V_H^{-1/2} V_H^{1/2} = \E[(1 - w(\chi_{p+4}^2(\lambda)))^2] ||\delta_s||^2.
+        V_H^{1/2} \Exp[(1 - w(\chi_{p+4}^2(\lambda)))^2] V_H^{-1/2} \|\delta_s\|^2 V_H^{-1/2} V_H^{1/2} = \Exp[(1 - w(\chi_{p+4}^2(\lambda)))^2] \|\delta_s\|^2.
     \end{align}
-To ensure that this item converges to 0 and recall that $\lambda = \delta_s^\top V_H^{-1} \delta_s^\top \sim O_{P}(||M||^2)$, we just need to make sure that $w(H_N) \sim O_{P}(H_N^{-1})$.
+To ensure that this item converges to 0 and recall that $\lambda = \delta_s^\top V_H^{-1} \delta_s^\top \sim O_{P}(\|M\|^2)$, we just need to make sure that $w(H_N) \sim O_{P}(H_N^{-1})$.
 Sigmoid smoothing and adaptive weighting functions all satisfies this requirement.
 For the third item, we have 
 \begin{equation*}
-        \lim\limits_{||\delta_s|| \rightarrow \infty} C_{WD} \E[(1 - w(\chi_{p+2}^2(\lambda)))^2] \rightarrow 0,
+        \lim\limits_{\|\delta_s\| \rightarrow \infty} C_{WD} \Exp[(1 - w(\chi_{p+2}^2(\lambda)))^2] \rightarrow 0,
 \end{equation*}
 and 
 \begin{equation*}
-    hh^\top [\E[(1 - w(\chi_{p+4}^2(\lambda)))^2] - \E[(1 - w(\chi_{p+2}^2(\lambda)))^2]] \rightarrow 0
+    hh^\top [\Exp[(1 - w(\chi_{p+4}^2(\lambda)))^2] - \Exp[(1 - w(\chi_{p+2}^2(\lambda)))^2]] \rightarrow 0
 \end{equation*}
-when $\lambda = \delta_s^\top V_H^{-1} \delta_s \sim O_{P}(||\delta_s||^2)$.
+when $\lambda = \delta_s^\top V_H^{-1} \delta_s \sim O_{P}(\|\delta_s\|^2)$.
 Then we prove that the third item also converges to 0, so as to the fourth part.
 
 We assume that $w^*(H_N) = \arg\min_{w} R$.
 Thus, we have
-\begin{lemma}
+\begin{lemma}\label{optimal_w_HN}
     We can obtain the optimal function $w^*$ through 
-    \begin{align}
-        w^*(H_N) &= 1- \frac{f_{\chi_{p+2}^2(\lambda)}(H_N) tr(C_{WD} + C_{WD}^\top) (tr(V_H^{-1})-1)}{2 \left[f_{\chi_{p+2}^2(\lambda)}(H_N) tr(V_H) + f_{\chi_{p+4}^2(\lambda)}(H_N) tr\{(C_{WD} + C_{WD}^\top) V_H^{-1}\} \right]} .
+    \begin{align}\label{wstar}
+        w^*(H_N) &= 1- \frac{f_{\chi_{p+2}^2(\lambda)}(H_N) [tr(C_{WD} V_H^{-1}) - tr(C_{WD})]}{f_{\chi_{p+2}^2(\lambda)}(H_N) tr(V_H) + f_{\chi_{p+4}^2(\lambda)}(H_N) \left[1+ 2 tr(C_{WD} V_H^{-1}) \right] },
     \end{align}
-
+where $C_{WD} = \Sigma_W^{-1} - C_{WS}$.
 \end{lemma}
 \begin{proof}
-    To minimize $R$, we differentiate $R$ with respect to $w(H_N)$, then we have the following equation. 
+    To minimize $R$, we differentiate $R$ in Eq.~\eqref{R_formula} with respect to $w(H_N)$, and have the following equation. 
     \begin{align}\label{R_differ}
         \notag
-        & -2(1-w(H_N)) [f_{\chi_{p+2}^2(\lambda)}(H_N) tr(V_H) + f_{\chi_{p+4}^2(\lambda)}(H_N) tr\{(C_{WD} + C_{WD}^\top) V_H^{-1}\}] \\
-        &= f_{\chi_{p+2}^2(\lambda)}(H_N) tr(C_{WD} + C_{WD}^\top) (tr(V_H^{-1})-1).
+        & 2(1-w(H_N)) [f_{\chi_{p+2}^2(\lambda)}(H_N) tr(V_H) + f_{\chi_{p+4}^2(\lambda)}(H_N) + f_{\chi_{p+4}^2(\lambda)}(H_N) tr(C_{WD} V_H^{-1})] \\
+        &= 2 f_{\chi_{p+2}^2(\lambda)}(H_N) tr(C_{WD} V_H^{-1}) - 2 tr(C_{WD}).
     \end{align}
-    By solving Eq.~\ref{R_differ}, we can obtain the optimized $w*(H_N)$.
+    By solving Eq.~\eqref{R_differ}, we can obtain the optimized $w^*(H_N)$.
 \end{proof}
 
+% On the other hand, the MSE of MSCLE 
+% \begin{align}
+%     R_S(h) = N \Exp[(\hbeta_S - \btheta_l)(\hbeta_S - \btheta_l)]^\top
+% \end{align},
+% while we have
+% \begin{equation*}
+%         \sqrt{N} (\hbeta_S - \btheta_l) =  \sqrt{N} (\hbeta_S - \btheta_{ls}) + \sqrt{N} (\htheta_S - \btheta_l).
+% \end{equation*}
+% Thus 
+% \begin{equation*}
+%     R_S(h) = \Exp[(Z_s-h)(Z_s-h)^\top] = \Exp[Z_S Z_S^\top] + hh^\top = V_S+ hh^\top.
+% \end{equation*}
+% Then as $\|h\| \rightarrow \infty$, $R_S(h) \rightarrow \infty$.
 
-On the other hand, the MSE of MSCLE 
+% Since $\btheta_l$ is unknown, thus we calculate the proxy risk $\hat{R}(\hat{w}^*)$ to evaluate the ture risk function $R(w)$, where we use $\htheta_W$ as the estimation of $\btheta_l$ in $R(w)$.
+% \begin{align}\label{hatR}
+%     \lNk \hat{R}(\hat{w}^*) &= N_k tr(\Exp[(\htheta_{NA} - \htheta_W) (\htheta_{NA} - \htheta_W)^\top)] \notag \\
+%     &= \lNk N_k \Exp[(1-w(H_N))^2 tr ((\htheta_W - \htheta_S) (\htheta_W - \htheta_S)^\top)] \notag \\
+%     &= \Exp[(1 - w(\chi_{p+2}^2(\lambda)))^2] tr(V_H) + \Exp[(1 - w(\chi_{p+4}^2(\lambda)))^2] \|\delta_s\|^2,
+% \end{align}
+% according to Eq.\eqref{Echi}.
+% We assume that $\hat{w}^*$ is the optimal weight of Eq.~\eqref{hatR}, then 
+% \begin{align}
+%     \hat{w}^* = 
+% \end{align}
+% We next check if $\hat{R}(\hat{w}^*)$ is a biased estimator of $R(w)$.
+% \begin{align}
+%    & \hat{R}(\hat{w}^*) - R(w) \notag \\
+%    &= N\Exp[(1-w(H_N))^2 \|\htheta_W - \htheta_S\|^2 + \|\htheta_W-\btheta_l\|^2 - 2(1-w(H_N)) (\htheta_W - \htheta_S)^\top (\htheta_W-\btheta_l) ].
+% \end{align}
+% We have
+% \begin{equation*}
+%     \lN N \Exp[\|\htheta_W-\btheta_l\|^2] = tr(\Sigma_W^{-1}),
+% \end{equation*}
+% and 
+% \begin{align*}
+%     & \lN N \Exp[2(1-w(H_N)) (\htheta_W - \htheta_S)^\top (\htheta_W-\btheta_l)] \notag \\
+%     &= 2 \Exp[1-w(\chi^2_{p+2}(\lambda))] tr(\Sigma_W^{-1} - C_{WS}) + 2\Exp[1-w(\chi^2_{p+4}(\lambda))] \delta_s^\top V_H^{-1} (\Sigma_W^{-1} - C_{WS}) \delta_s.
+% \end{align*}
+% It is clear that $\hat{R}(\hat{w}^*)$ is an unbiased estiamtor of $R(w)$. 
+% Thus, we have to add the penalty for $\Exp (\hat{R}(\hat{w}^*))$ and turn it into $\hat{R}^{corre}(w)$. %to ensure that $\arg \sup_{w \in \{0,1\}} |\hat{R}^{corre}(w) - R(w)| = \op$.
+% \begin{align}
+%     \hat{R}^{corre}(w) &= \hat{R}(\hat{w}^*) + tr(\hat{\Sigma}_W^{-1}) - 2 \Exp[1-w(\chi^2_{p+2}(\hat{\lambda}))] tr(\hat{\Sigma}_W^{-1} - \hat{C}_{WS}) \notag \\
+%     &- 2\Exp[1-w(\chi^2_{p+4}(\hat{\lambda}))] \hat{h}^\top \hV_H^{-1} (\hat{\Sigma}_W^{-1} - \hat{C}_{WS}) \hat{h},
+% \end{align}
+% where $\hat{\lambda} = \hat{h}^\top \hV_H^{-1}\hat{h}$ and $\hat{h} = \htheta_W - \htheta_S$.
+% The corrleation matrix estimators $\hat{\Sigma}_W, \hat{C}_{WS}$ and $\hV_H$ are calculated through the sandwich method based on the current influnece function.
+
+Let $w^*(H_N)$ denote the oracle pointwise optimal weight function 
+defined in Eq.~\ref{wstar}, which depends on the true asymptotic 
+quantities such as $\Sigma_W$, $C_{WD}$, $V_H$, and $\lambda$. 
+Since these population-level quantities are unknown in practice, 
+$w^*(H_N)$ cannot be computed directly.
+Instead, we replace all unknown components with their sample 
+counterparts and define the plug-in weight function 
+$\hat{w}^*(h_N) = w^*(h_N;  \hat{\Theta}_M)$, 
+where $\hat{\Theta}_M = (\hat{\Sigma}_W, \hat{C}_{WD}, \hV_H, \hat{\lambda})$.
+Accordingly, we introduce the proxy risk function $\hat{R}(\hat{w}^*)$, 
+in which every population quantity appearing in $R(w)$ is replaced 
+by its plug-in estimator.
+Our goal is to show that the proxy risk $\hat{R}(\hat{w}^*)$ 
+provides a valid approximation to the true risk $R(w^*)$ 
+in the sense that their difference remains bounded as $N \to \infty$.
+This strategy is motivated by the model averaging literature 
+\citep{liang2011optimal, zhang2016optimal, chen2024optimal}, 
+where analogous arguments are used to establish that the optimal 
+weights under the estimated and true risk functions are 
+asymptotically equivalent. 
+
+However, unlike the classical model averaging framework in 
+\citep{liang2011optimal, zhang2016optimal, chen2024optimal}, 
+where one can establish that the ratio of the estimated risk to the oracle risk converges to one in probability, the result of $\frac{w^*(H_N)}{w^*_{or}} \cvp 1$ or $\lN \hat{R}(\hat{w}^*) \cvp R(w^*)$ does not hold in our setting.
+The fundamental obstacle is that the non-centrality parameter 
+$\lambda$ cannot be consistently estimated: its plug-in estimator $\hat{\lambda} = H_N$ converges in distribution to $\chi^2_p(\lambda)$, rather than in probability to the constant $\lambda$.
+Instead, we establish that the excess risk 
+$R(\hat{w}^*) - R(w^*)$ remains bounded by a finite constant 
+that does not grow with $N$, as formalised in the following result.
+
+\begin{proposition}
+    $\lN \hat{R}(\hat{w}^*) - R(w^*) =\Op$, 
+    where the bound is finite and does not vanish as $N \to \infty$.
+\end{proposition}
+
+\begin{proof}
+    We recall that the risk of any weight function $w(\cdot)$ satisfies
+    \begin{align*}
+        R(w) &= N \Exp [\|(\htheta_W - \btheta_l) - (1-w(H_N))(\htheta_W - \htheta_S)\|^2] \notag \\
+        &= N \Exp[ \Exp[\|(\htheta_W - \btheta_l) - (1-w(H_N))(\htheta_W - \htheta_S)\|^2] \mid H_N] \notag \\
+        &= N \int \Exp[\|(\htheta_W - \btheta_l) - (1-w(h_N))(\htheta_W - \htheta_S)\|^2] f_{H_N}(h_N) dh_N,
+    \end{align*}
+    Expanding the squared norm inside the conditional expectation and noting that $w(h_N)$ is a constant given $H_N = h_N$, we obtain
+    \begin{align}\label{eq:risk_expanded}
+        R(w) &= N \int \Exp[\|(\htheta_W - \btheta_l)\|^2 + (1-w(h_N))^2 a(h_N) - 2(1-w(h_N))b(h_N)] f_{H_N}(h_N) dh_N, 
+    \end{align}
+    where 
+    \begin{align*}
+        a(h_N) &= \Exp[\|\htheta_W - \htheta_S\|^2 \mid h_N], \\
+        b(h_N) &= \Exp[(\htheta_W - \btheta_l)^\top(\htheta_W - \htheta_S )\mid h_N].
+    \end{align*}
+    Since $\Exp[\|(\htheta_W - \btheta_l)\|^2]$ does not depend on $w$, minimizing Eq.~\eqref{eq:risk_expanded} over $w$ reduces to a pointwise optimization for each $h_N$ and we only have to consider the second and third component. 
+
+    For each fixed $h_N > 0$, the integrand in Eq.~\eqref{eq:risk_expanded} is quadratic in $w(h_N)$ with positive leading coefficient $a(h_N)$. Minimizing over $w(h_N)$ yields the oracle pointwise optimal weight
+    \begin{equation*}
+        w^*(h_N) = 1-\frac{b(h_N)}{a(h_N)}.
+    \end{equation*}
+    By appling such optimal weight to the excess risk of any weight function $\hat{w}^*$ relative to $w^*$, the risk function satisfies
+    \begin{align}\label{eq:excess_risk}
+        R(\hat{w}^*) - R(w^*) = N \int a(h_N) [\hat{w}^*(h_N) - w^*(h_N)]^2 f_{H_N}(h_N) dh_N.
+    \end{align}
+    Since $a(h_N) > 0$ and the integrand is a product of non-negative terms, the right-hand side of Eq.~\eqref{eq:excess_risk} is non-negative for any weight function $\hat{w}^*$, confirming that $w^*$ defined in Eq.~\eqref{wstar} is indeed the pointwise risk minimum point.
+    
+    We relate $a(h_N)$ to $h_N$ through the quadratic form structure.
+    We recall that $D_\delta = \hV_H^{-1/2}\sqrt{N}(\htheta_W - \htheta_S)$, so that $H_N = \|D_\delta\|^2$.
+    Therefore,
+    $a(h_N) = \Exp[\|\htheta_W - \htheta_S\|^2 \mid h_N]$ can be controled through the value of $h_N$ since
+    \begin{equation*}
+        N\|\htheta_W - \htheta_S\|^2 = D_\delta^\top \hV_H D_\delta \leq \lambda_{max}(\hV_H) \|D_\delta\|^2 = \lambda_{max}(\hV_H) H_N.
+    \end{equation*}
+    Taking conditional expectations on both sides, we obtain
+    \begin{align}\label{eq:a_bound}
+        N \cdot a(h_N) \leq \lambda_{\max}(\hV_H) h_N \sim \left(\lambda_{\max}(V_H) + \op\right) h_N,
+    \end{align}
+    since $\hV_H \cvp V_H$ (as established in the plug-in consistency results).
+
+    We next prove that $[\hat{w}^*(h_N) - w^*(h_N)]^2 =\Op$.
+    We first decompose the plug-in parameter as $\hat{\Theta} = (\hat{\Theta}_{-\lambda},  \hat\lambda)$, where $\hat{\Theta}_{-\lambda} = (\Sigma_W, \hat{C}_{WS}, \hV_H)$ collects the variance components and $\hat\lambda = H_N$.
+    %By the lemmas~\ref{asym_AW} and \ref{asym_BW}, each variance component satisfies $\hat{\Theta}_{-\lambda} - \Theta_{-\lambda} = O_{P}(N^{-1/2})$.
+    %Since $w^*(h_N;\cdot,\lambda)$ is a smooth function of $\Theta_{-\lambda}$ (the ratio $b(h_N)/a(h_N)$ depends smoothly on $V_W$, $C_{WS}$, and $V_H$), a Taylor expansion yields
+    % \begin{equation*}
+    %     w^*(h_N; \hat{\Theta}_{-\lambda}, \lambda) - w^*(h_N; \Theta_{-\lambda}, \lambda) = O_{P}(N^{-1/2})
+    %     \quad \text{for each fixed } h_N.
+    % \end{equation*}
+
+    The estimator $\hat\lambda = H_N$ satisfies $\hat\lambda \xrightarrow{d} \chi^2_p(\lambda)$, where $\lambda = \delta_s^\top V_H^{-1} \delta_s$. 
+    Crucially, $\hat\lambda$ converges in distribution to a non-degenerate random variable rather than in probability to the constant $\lambda$. 
+    Consequently, for each fixed $h_N$,
+    \begin{equation*}
+         w^*(h_N;\hat\lambda) - w^*(h_N;\lambda) = \Op,
+    \end{equation*}
+    and this error does not vanish as $N \to \infty$.
+    The $O_{P}(N^{-1/2})$ contribution from $\htheta_{-\lambda}$ is asymptotically negligible relative to the $\Op$ contribution from $\hat\lambda$, thus the overall weight estimation error satisfies
+    \begin{equation}\label{eq:weight_error}
+        [\hat{w}^*(h_N) - w^*(h_N)]^2 = \Op \quad \text{uniformly in } h_N.
+    \end{equation}
+    Moreover, since $w^* \in [0,1]$, the squared error is deterministically bounded by a constant say $c_w$ $\Op$.
+
+    Substituting Eq.~\eqref{eq:a_bound} and Eq.~\eqref{eq:weight_error} into the excess risk identity Eq.~\eqref{eq:excess_risk}, we obtain
+    \begin{align}\label{eq:final_bound}
+        R(\hat{w}^*) - R(w^* )
+        &= N \int a(h_N) [\hat{w}^*(h_N) - w^*(h_N)]^2 f_{H_N}(h_N) dh_N \notag \\
+        &\leq \lambda_{\max}(V_H) \int [\hat{w}^*(h_N) - w^*(h_N)]^2  h_N  f_{H_N}(h_N)  dh_N + \op.
+    \end{align}
+    Since $[\hat{w}^*(h_N) - w^*(h_N)]^2 \leq c_w$ and $H_N \xrightarrow{d} \chi^2_p(\lambda)$, we have
+    \begin{equation*}
+        \int [\hat{w}^*(h_N) - w^*(h_N)]^2  h_N  f_{H_N}(h_N)  dh_N
+        \leq c_w \int_0^\infty h_N  f_{H_N}(h_N) dh_N
+        = c_w  \Exp[H_N].
+    \end{equation*}
+    For any $\chi^2_p(\lambda)$ random variable, $\Exp[\chi^2_p(\lambda)] = p + \lambda < \infty$.
+    Therefore,
+    \begin{equation}\label{eq:final_result}
+        R(\hat{w}^*) - R(w^*) \leq c_w \lambda_{\max}(V_H)(p + \lambda) + \op = \Op.
+    \end{equation}
+    This establishes that the excess risk is bounded but does not vanish, due to the irreducible estimation error in $\hat\lambda$.
+\end{proof}
+
+% {\color{red} In the simulation of Section 8~\cite{wang2022maximum}, the MSE of MSCLE are still lower than the one of IPW, under multiple pilot cases. So when we do the model selection and use MSE as criteria, MSCLE should always be selected? This means $w^*=1$ for all cases?}
+
+\subsection{A constant w}
+
+According to lemma~\ref{optimal_w_HN}, we also can find that, if we ignore the influence of $H_N$ in the weight $w$, i.e. we treat $w$ as a constant, then the ture risk function turns to 
+\begin{equation*}
+    \lN R(w) = \lN \Exp[tr( [w(\htheta_W - \htheta_l) + (1-w)(\htheta_S - \htheta_l)] [w(\htheta_W - \htheta_l) + (1-w)(\htheta_S - \htheta_l)]^\top )],
+\end{equation*}
+where $w$ is irrelevant with the estimators $\htheta_W$ and $\htheta_S$.
+Then 
 \begin{align}
-    R_S(h) = N \E[(\hbeta_S - \btheta_l)(\hbeta_S - \btheta_l)]^\top
-\end{align},
-while we have
-\begin{equation*}
-        \sqrt{N} (\hbeta_S - \btheta_l) =  \sqrt{N} (\hbeta_S - \btheta_{ls}) + \sqrt{N} (\htheta_S - \btheta_l).
-\end{equation*}
-Thus 
-\begin{equation*}
-    R_S(h) = \E[(Z_s-h)(Z_s-h)^\top] = \E[Z_S Z_S^\top] + hh^\top = V_S+ hh^\top.
-\end{equation*}
-Then as $||h|| \rightarrow \infty$, $R_S(h) \rightarrow \infty$.
+    \lN R(w) = w^2 tr(\Sigma_W^{-1}) +2w(1-w) tr(C_{WS}) + (1-w)^2(tr(\Sigma_{SM}^{-1}) \|\delta_s\|^2).
+\end{align}
+Then the optimal oracle weight $w^*_{or}$ is only related with $\delta_s$ and
+\begin{align}
+    w^*_{or}(\delta_s) &= \arg \min_{w} \lN R(w) = 1 - \frac{\|\delta_s\|^2 + tr(\Sigma_{SM}^{-1} - C_{WS})}{\|\delta_s\|^2 + tr(\Sigma_{W}^{-1} + \Sigma_{SM}^{-1} - 2C_{WS})}.
+\end{align}
+Since $\|\delta_s\|$ is unknown, we also provide the minimax result of $w$ which is
+\begin{align}
+    w^*_{or,max} &= \arg \min_{w} \max_{\|\theta_W - \theta_S\| \leq M/\sqrt{N}} \lN R(w) = 1- \frac{\|M\|^2 + tr(\Sigma_{SM}^{-1} - C_{WS})}{\|M\|^2 + tr(\Sigma_{W}^{-1} + \Sigma_{SM}^{-1} - 2C_{WS})},
+\end{align}
+which means $w^*_{or,max}$ is the minimax optimal value of the MSE under the condition of $\|\theta_W - \theta_S\| \leq \frac{M}{\sqrt{N}}$.
 
+
+\subsection{Estimated subsampling probabilities}
+
+In practice, informative subsampling probabilities may depend on unknown parameters, say $\vartheta$, and a pilot subsample is often used to estimate it. 
+In the case of model misspecificated, $\vartheta$ has a very large chance to differ from the true parameter $\theta_0$.
+We denote the pilot estimator of $\vartheta_{plt}$, and assume that $\vartheta_{plt}$ is independent of the data to sample and converges to a limit, i.e., $\vartheta_{plt} \xrightarrow{p} \vartheta_p$.
+Still, $\vartheta_{pls}$ satisfies
+\begin{equation*}
+    \Exp\{\dl_W(\theta \mid \vartheta_{pls}) \mid \vartheta_{pls} \} = 0.
+\end{equation*}
 % and 
 % \begin{equation*}
 %     (\htheta_S - \btheta_{ls}) = -\A_{SM}^{-1} \left( \frac{1}{N} \sum_{i=1}^{N} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) +\op \right),
 % \end{equation*}
-% where the Hessian matrix of IPW $\M_W = \E^t[ \frac{\delta}{\pi(\x,y)} \ddot{\ell}(\btheta_l; \x,y) ]$ and the Hessian matrix of MSCLE $\M_S$ is approximated through 
+% where the Hessian matrix of IPW $\M_W = \Exp^t[ \frac{\delta}{\pi(\x,y)} \ddot{\ell}(\btheta_l; \x,y) ]$ and the Hessian matrix of MSCLE $\M_S$ is approximated through 
 %  \begin{align}
-%     M_{S,N} = \frac{1}{N} \sum_{i=1}^{N} \delta \{ \ddot{\ell}^w(\btheta_l; \x_i,y_i) - \E^w(\ddot{\ell}(\btheta_l; \x_i,y_i) \mid \x_i, \delta=1) - \Var^w(\dl (\btheta_l; \x_i,y_i) \mid \x_i, \delta=1)\} .
+%     M_{S,N} = \frac{1}{N} \sum_{i=1}^{N} \delta \{ \ddot{\ell}^w(\btheta_l; \x_i,y_i) - \Exp^w(\ddot{\ell}(\btheta_l; \x_i,y_i) \mid \x_i, \delta=1) - \Var^w(\dl (\btheta_l; \x_i,y_i) \mid \x_i, \delta=1)\} .
 % \end{align}
 % Under the Assumption 2 and the strong law of large numbers, we have $M_{S,N} \xrightarrow{a.s} \M_S$ where
 % \begin{align}
-%     \M_S = \E^t [ \delta \{ \ddot{\ell}^w(\btheta_l; \x,y) - \E^w(\ddot{\ell}(\btheta_l; \x,y) \mid \x, \delta=1) - \Var^w(\dl (\btheta_l; \x,y) \mid \x, \delta=1)\} ].
+%     \M_S = \Exp^t [ \delta \{ \ddot{\ell}^w(\btheta_l; \x,y) - \Exp^w(\ddot{\ell}(\btheta_l; \x,y) \mid \x, \delta=1) - \Var^w(\dl (\btheta_l; \x,y) \mid \x, \delta=1)\} ].
 % \end{align}
 
 % We also have to make the assumption that the limiting matrix $\M_S$ is non-singular and positive definite.
-% We want to calculate $\hat{V}_H$ and 
+% We want to calculate $\hV_H$ and 
 % \begin{align}
-%     \hV_H \xrightarrow{P} \Sigma_{WM}^{-1} + \Sigma_{SM}^{-1} - \Cov(\htheta_W, \htheta_S) - \Cov(\htheta_S, \htheta_W),
+%     \hV_H \cvp \Sigma_{WM}^{-1} + \Sigma_{SM}^{-1} - \Cov(\htheta_W, \htheta_S) - \Cov(\htheta_S, \htheta_W),
 % \end{align}
 % where the variance-correlation matrix under the model misspecification is 
 % \begin{align}
-%     \Sigma_{WM}^{-1} = \E^t[\dl ^{\otimes 2} (\btheta;,\x,y)] ^{-1} \E\left\{ \frac{\dl ^{\otimes 2} (\btheta;,\x,y)}{\pi(\x,y)}\right\} \E^t[\dl ^{\otimes 2} (\btheta;,\x,y)]^{-1}.
+%     \Sigma_{WM}^{-1} = \Exp^t[\dl ^{\otimes 2} (\btheta;,\x,y)] ^{-1} \Exp\left\{ \frac{\dl ^{\otimes 2} (\btheta;,\x,y)}{\pi(\x,y)}\right\} \Exp^t[\dl ^{\otimes 2} (\btheta;,\x,y)]^{-1}.
 % \end{align}
 
 % where 
 % \begin{equation*}
-%     \dot{\ell}_S (\btheta_{ls};,\x,y) = \delta [\dot{\ell}^w (\btheta_{ls};\x,y) - \E^w\{ \dot{\ell}^w (\btheta_{ls};\x,y) \mid \x, \delta=1 \}].
+%     \dot{\ell}_S (\btheta_{ls};,\x,y) = \delta [\dot{\ell}^w (\btheta_{ls};\x,y) - \Exp^w\{ \dot{\ell}^w (\btheta_{ls};\x,y) \mid \x, \delta=1 \}].
 % \end{equation*}
 % Then the $\Cov(\htheta_W-\btheta_l, \htheta_S-\btheta_{ls})$ can be transformed to 
 % \begin{align}
-%     C_{WS} = \M_W^{-1} \E[ \psi_{W,i} \psi_{S,i}^\top] \M_S^{-\top} &= \M_W^{-1} \E[ \dot{\ell}_W (\btheta_{l};,\x,y) \dot{\ell}_S (\btheta_{ls};,\x,y) ^\top] \M_S^{-\top}
+%     C_{WS} = \M_W^{-1} \Exp[ \psi_{W,i} \psi_{S,i}^\top] \M_S^{-\top} &= \M_W^{-1} \Exp[ \dot{\ell}_W (\btheta_{l};,\x,y) \dot{\ell}_S (\btheta_{ls};,\x,y) ^\top] \M_S^{-\top}
 % \end{align}
 % where 
 % \begin{equation*}
-%     \dot{\ell}_W (\btheta_{l};,\x,y) \dot{\ell}_S (\btheta_{ls};,\x,y) ^\top = \dot{\ell}^w (\btheta_{l};\x,y) \cdot [\dot{\ell}^w (\btheta_{ls};\x,y) - \E^w\{ \dot{\ell}^w (\btheta_{ls};\x,y) \mid \x, \delta=1 \}]^\top
+%     \dot{\ell}_W (\btheta_{l};,\x,y) \dot{\ell}_S (\btheta_{ls};,\x,y) ^\top = \dot{\ell}^w (\btheta_{l};\x,y) \cdot [\dot{\ell}^w (\btheta_{ls};\x,y) - \Exp^w\{ \dot{\ell}^w (\btheta_{ls};\x,y) \mid \x, \delta=1 \}]^\top
 % \end{equation*}
 % and we denote that $\psi_{W,i} = \psi_W (\btheta_l; \x_i, y_i, \delta_i)$ and $\psi_{S,i} = \psi_S (\btheta_{ls}; \x_i, y_i, \delta_i)$ are the score functions of IPW and MSCLE for simplify.
 % The formulation of $\Cov(\htheta_S-\btheta_{ls}, \htheta_W-\btheta_l)$ has the similar result. 
@@ -565,18 +894,18 @@ Then as $||h|| \rightarrow \infty$, $R_S(h) \rightarrow \infty$.
 % As a result, 
 % \begin{align}
 %     \notag
-%     R(h) &= \Sigma_{SM}^{-1} +V_H^{1/2} (\E[w(\chi_{p+2}^2(\lambda))^2] \I_p + \E[w(\chi_{p+4}^2(\lambda))^2] V_H^{-1/2} hh^\top V_H^{-1/2}) V_H^{1/2} \\
+%     R(h) &= \Sigma_{SM}^{-1} +V_H^{1/2} (\Exp[w(\chi_{p+2}^2(\lambda))^2] \I_p + \Exp[w(\chi_{p+4}^2(\lambda))^2] V_H^{-1/2} hh^\top V_H^{-1/2}) V_H^{1/2} \\
 %     \notag
-%     &+ C_{SD}V_H^{-1/2} (\E[w(\chi_{p+2}^2(\lambda))^2] \I_p + \E[w(\chi_{p+4}^2(\lambda))^2] V_H^{-1/2} hh^\top V_H^{-1/2}) V_H^{1/2} \\
+%     &+ C_{SD}V_H^{-1/2} (\Exp[w(\chi_{p+2}^2(\lambda))^2] \I_p + \Exp[w(\chi_{p+4}^2(\lambda))^2] V_H^{-1/2} hh^\top V_H^{-1/2}) V_H^{1/2} \\
 %     \notag
-%     &- C_{SD}V_H^{-1}(hh^\top \E[w(\chi_{p+2}^2(\lambda))^2]) \\
+%     &- C_{SD}V_H^{-1}(hh^\top \Exp[w(\chi_{p+2}^2(\lambda))^2]) \\
 %     \notag
-%     &+ V_H^{1/2} (\E[w(\chi_{p+2}^2(\lambda))^2] \I_p + \E[w(\chi_{p+4}^2(\lambda))^2] V_H^{-1/2} hh^\top V_H^{-1/2}) V_H^{-1/2}C_{SD}^\top \\    
-%      &- (hh^\top \E[w(\chi_{p+2}^2(\lambda))^2]) V_H^{-1} C_{SD}^\top.
+%     &+ V_H^{1/2} (\Exp[w(\chi_{p+2}^2(\lambda))^2] \I_p + \Exp[w(\chi_{p+4}^2(\lambda))^2] V_H^{-1/2} hh^\top V_H^{-1/2}) V_H^{-1/2}C_{SD}^\top \\    
+%      &- (hh^\top \Exp[w(\chi_{p+2}^2(\lambda))^2]) V_H^{-1} C_{SD}^\top.
 % \end{align}
 
 
-% Next, we want to prove that when $||h|| = 0$, $R(0)$ closes to the correlation matrix of MSCLE, which reaches the Cramer-Rao bound of such estimator. 
+% Next, we want to prove that when $\|h\| = 0$, $R(0)$ closes to the correlation matrix of MSCLE, which reaches the Cramer-Rao bound of such estimator. 
 % \begin{lemma}
 %     $\lim_{N \rightarrow \infty} R(0) \rightarrow V_{SM}^{-1}$.
 % \end{lemma} 
@@ -590,27 +919,27 @@ Then as $||h|| \rightarrow \infty$, $R_S(h) \rightarrow \infty$.
 %     \end{align}
 %     Based on the previous calculation, we have 
 %     \begin{align}
-%         R(0) \rightarrow \Sigma_{SM}^{-1} + (V_H + C_{SD} + C_{SD}^\top) \E[w(\chi_{p+2}^2(0))^2],
+%         R(0) \rightarrow \Sigma_{SM}^{-1} + (V_H + C_{SD} + C_{SD}^\top) \Exp[w(\chi_{p+2}^2(0))^2],
 %     \end{align}
-%     and we can also derive that the difference between the correlation matrixs of IPW and MSCLE is
+%     and we can also derive that the difference between the correlation matrices of IPW and MSCLE is
 %     \begin{align}
 %         \Sigma_{WM}^{-1} \rightarrow \Sigma_{SM}^{-1}  + V_H + C_{SD} + C_{SD}^\top.
 %     \end{align}
-%     If we choose the appropriate $w(\cdot)$ so that $\E[w(\chi_{p+2}^2(0))^2] \rightarrow 0$, then we can prove that $R(0) \rightarrow \Sigma_{SM}^{-1}$.
+%     If we choose the appropriate $w(\cdot)$ so that $\Exp[w(\chi_{p+2}^2(0))^2] \rightarrow 0$, then we can prove that $R(0) \rightarrow \Sigma_{SM}^{-1}$.
 %     In this case, $R(0)$ can reach the minimum variance.
 %     Besides, we have
 %     \begin{equation*}
-%         R(0) - \Sigma_{WM}^{-1} \rightarrow -(V_H + C_{SD} + C_{SD}^\top) (1-\E[w(\chi_{p+2}^2(0))^2]),
+%         R(0) - \Sigma_{WM}^{-1} \rightarrow -(V_H + C_{SD} + C_{SD}^\top) (1-\Exp[w(\chi_{p+2}^2(0))^2]),
 %     \end{equation*}
 %     which means that $\Sigma_{WM}^{-1}$ is great than $R(0)$ in the sense of the Loewner order.
 
-%     When we choose the adaptive weighting smoothing method, $\E[w(\chi_{p+2}^2(0))^2] \rightarrow 0$.
-%     If we choose the sigmoid smoothing method and set $c_\alpha$ as a fixed number, then $w(\chi_{p+2}^2(0))$ is a non-zero number. But, if we let $c_\alpha$ is related with $N$ which derive that $\exp(\frac{c_\alpha}{s}) \sim \Op(N^{-1})$, then $w(\chi_{p+2}^2(0))$ also satisfies that $\E[w(\chi_{p+2}^2(0))^2] \rightarrow 0$.
+%     When we choose the adaptive weighting smoothing method, $\Exp[w(\chi_{p+2}^2(0))^2] \rightarrow 0$.
+%     If we choose the sigmoid smoothing method and set $c_\alpha$ as a fixed number, then $w(\chi_{p+2}^2(0))$ is a non-zero number. But, if we let $c_\alpha$ is related with $N$ which derive that $\exp(\frac{c_\alpha}{s}) \sim \Op(N^{-1})$, then $w(\chi_{p+2}^2(0))$ also satisfies that $\Exp[w(\chi_{p+2}^2(0))^2] \rightarrow 0$.
 % \end{proof}
 
 
 
-% We first have to prove that $N \E[(\htheta_{NA} - \btheta_l)^{\otimes 2}] \rightarrow R(h)$.
+% We first have to prove that $N \Exp[(\htheta_{NA} - \btheta_l)^{\otimes 2}] \rightarrow R(h)$.
 % First, under the local misspecificated assumption, we already have 
 % \begin{align}
 %     \begin{pmatrix}
@@ -627,10 +956,10 @@ Then as $||h|| \rightarrow \infty$, $R_S(h) \rightarrow \infty$.
 %         C_{WS} & \Sigma_S^{-1}
 %     \end{pmatrix}\right).
 % \end{align}
-% $\E[w(H_N)^2 ||D_N +h||^2] \xrightarrow{d} \E[w(H)^2 ||D_N +h||^2]$. To make sure this, we have to make sure that $H_N \xrightarrow{d} H$.
+% $\Exp[w(H_N)^2 \|D_N +h\|^2] \xrightarrow{d} \Exp[w(H)^2 \|D_N +h\|^2]$. To make sure this, we have to make sure that $H_N \xrightarrow{d} H$.
 % Then $R(h)$ can be simplified as the combination of the variance of $\htheta_S$ and the strategy loss caused by $\htheta_W$ that 
 % \begin{align}
-%     R(h) = \Sigma_{SM}^{-1} + \E(w(H_N)^2(D_N+h)(D_N+h)^\top) + 
+%     R(h) = \Sigma_{SM}^{-1} + \Exp(w(H_N)^2(D_N+h)(D_N+h)^\top) + 
 % \end{align}
 
 
