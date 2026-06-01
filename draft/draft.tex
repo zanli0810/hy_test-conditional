@@ -27,11 +27,11 @@ We denote the informative subsampling probabilities depend on the responses as $
 
 A commonly used subsample estimator is based on an inverse probability weighted (IPW) objective function,
 \begin{align*}
-    \htheta_W = \arg\max_{\btheta} \ell_W(\btheta) = \arg\max_{\btheta} \sum_{i=1}^{N} \frac{\delta_i \ell(\btheta; \x_i, y_i)}{\pi(\x_i, y_i)},
+    \htheta_W = \arg\max_{\btheta} \ell^w(\btheta) = \arg\max_{\btheta} \sum_{i=1}^{N} \frac{\delta_i \ell(\btheta; \x_i, y_i)}{\pi(\x_i, y_i)},
 \end{align*}
 and we note that that the score function of IPW is
 \begin{align}\label{psi_W}
-    \psi_W (\btheta; \x_i, y_i, \delta_i) = \frac{\delta_i}{\pi(\x_i,y_i)} \dl (\btheta;\x_i, y_i),
+    \dl_W (\btheta; \x_i, y_i, \delta_i) = \frac{\delta_i}{\pi(\x_i,y_i)} \dl (\btheta;\x_i, y_i),
 \end{align}
 where $\dl(\btheta; \x, y) = \partial \log f(y \mid \x; \btheta) / \partial \btheta$.
 IPW has the proposition of 
@@ -40,7 +40,7 @@ IPW has the proposition of
 \end{align}
 where $\btheta_0$ is the true value and 
 \begin{align}\label{eq:SigW}
-    \Sigma_W^{-1} = \Exp \left[\ddl( \btheta_l;\x, y)\right]^{-1} \Exp \left[\frac{\dl( \btheta_l;\x, y)^{\otimes 2}}{\pi(\x, y)}\right] \Exp \left[\ddl( \btheta_l;\x, y)\right]^{-\top}.
+    \Sigma_W^{-1} = \Exp \left[\ddl( \btheta_0;\x, y)\right]^{-1} \Exp \left[\frac{\dl( \btheta_0;\x, y)^{\otimes 2}}{\pi(\x, y)}\right] \Exp \left[\ddl( \btheta_0;\x, y)\right]^{-\top}.
 \end{align}
 We note that $\ddl(\btheta; \x, y) = \partial \dl(y \mid \x; \btheta) / \partial \btheta$.
 
@@ -53,7 +53,7 @@ where $\mathrm{d}y$ is the Lebesgue measure for continuous responses and it is t
 
 The sampled data conditional log-likelihood function from Eq.~\eqref{eq:y_cond_delta} has a general form of
 \begin{align}\label{l_S}
-    \ell_S(\btheta) = \sum_{i=1}^{N} \ell_S(\btheta; \x_i, y_i) = \sum_{i=1}^{N} \delta_i \left[ \ell(\btheta; y_i, \x_i) - \log\{\bapi(\x_i; \btheta)\} \right] + C,
+    \ell_S(\btheta) = \sum_{i=1}^{N} \ell_S(\btheta; \x_i, y_i) = \sum_{i=1}^{N} \delta_i \left[ \ell(\btheta; \x_i, y_i) - \log\{\bapi(\x_i; \btheta)\} \right] + C,
 \end{align}
 where
 \begin{equation*}
@@ -74,17 +74,13 @@ where
     \frac{\partial}{\partial \btheta} \bapi(\x_i; \btheta) = \int \frac{\partial}{\partial \btheta} f(y \mid \x_i; \btheta) \pi(\x_i, y)   dy = \E\{\dl(\btheta; \x_i, y_i) \pi(\x_i, y_i) \mid \x_i\}
 \end{align}
 Thus, we can express
-\begin{align}
-    \dl_S(\btheta) = \sum_{i=1}^{N} \delta_i \left[ \dl(\btheta; \x_i, y_i) - \E\{\dl(\btheta; \x_i, y_i) \mid \x_i, \delta_i = 1\} \right],
+\begin{align}\label{psi_S}
+    \dl_S(\btheta) = \sum_{i=1}^{N} \delta_i \left[ \dl(\btheta; \x_i, y_i) - \E\{\dl(\btheta; \x_i, y_i) \mid \x_i, \delta_i = 1\} \right] := \sum_{i=1}^{N} \dl_S(\btheta; \x_i, y_i, \delta_i),
 \end{align}
 where
 \begin{equation*}
     \E\{\dl(\btheta; \x_i, y_i) \mid \x_i, \delta_i = 1\} = \frac{\E\{\dl(\btheta; \x_i, y_i) \pi(\x_i, y_i) \mid \x_i\}}{\bapi(\x_i; \btheta)}.
 \end{equation*}
-Thus, we assume that 
-\begin{align}\label{psi_S}
-    \psi_S(\btheta; \x_i, y_i, \delta_i) = \dl(\btheta; \x_i, y_i) - \E\{\dl(\btheta; \x_i, y_i) \mid \x_i, \delta_i = 1\}.
-\end{align}
 From \citet{wang2022maximum}, we have 
 \begin{align}
     \sqrt{N} (\htheta_S - \btheta_0) \sim \N(0, \Sigma_S^{-1}),
@@ -106,44 +102,42 @@ Hausman-type test \cite{hausman1978specification, white1982maximum} is establish
 
 When the model is misspecificated, the score function of MSCLE would be a little bit different from Eq.~\eqref{psi_S} 
 since we have to calculate the expection $\bapi(\x_i; \btheta) = \int f(y \mid \x_i,\btheta) \pi(\x_i, y) \mathrm{d}y$, which depends on the assumption of $f(y \mid \x_i,\btheta)$.
-To divide the definition of correct model and misspecificated model, we denote that $E^w$ is the expectation under the assumed working model 
-and we use $\Exp^t$ to emphasize that the expectation is taken with respect to the true data distribution. 
+To divide the definition of correct model and misspecificated model, we denote that $f^w$ is the the assumed working model and $f^t$ the true data distribution. 
+Then, when model is misspecificated, the logliklihood first, second derivation functions are presented as $\ell^w, \dl^w$ and $\ddl^w$, representively.
 Under this situation, the full data MLE should be solved through the function of 
 \begin{equation*}
-    \frac{1}{N} \sum_{i=1}^{N} \dl (\btheta; \x_i,y_i) = 0.
+    \frac{1}{N} \sum_{i=1}^{N} \dl^w (\btheta; \x_i,y_i) = 0.
 \end{equation*}
 For IPW estimator, $\htheta_W$ is solved through
 \begin{align}\label{eq:EW_mis}
-    \frac{1}{N} \sum_{i=1}^{N} \frac{\delta}{\pi(\x_i,y_i)} \dl (\btheta; \x_i,y_i) = 0,
+    \frac{1}{N} \sum_{i=1}^{N} \frac{\delta_i}{\pi(\x_i,y_i)} \dl^w (\btheta; \x_i,y_i) = 0,
 \end{align}
-which converges to $\btheta_l$. $\btheta_l$ is the solution of
+which converges to $\btheta_l$, where $\btheta_l$ is the solution of
 \begin{equation*}
-    \Exp^t [\frac{\delta}{\pi(\x_i,y_i)} \dl (\btheta; \x_i,y_i)] = \Exp^t [\dl (\btheta; \x,y)]= 0.
+    \Exp [\frac{\delta_i}{\pi(\x_i,y_i)} \dl^w (\btheta; \x_i,y_i)] = \Exp [\dl^w (\btheta; \x,y)]= 0.
 \end{equation*}
 This shows that the IPW esitmator shares same formulation with the full data case.
 We want to emphasize that $\btheta_l$ is the pesudo true value, instead of the true value $\btheta_0$.
 
-We assume that the score function of MSCLE under model misspecification is 
+When we have a specific subsampling method, the sampling probability $\pi(\x, y;\vartheta)$ is related a pilot parameter $\vartheta$, 
+then we assume that the score function of MSCLE under model misspecification is 
 \begin{align}
-    \psi_{SM}(\btheta; \x_i, y_i, \delta_i) &= \delta_i [\dl(y_i \mid \x_i,\btheta) - \E^w\{\dl(\btheta; \x_i, y_i) \mid \x_i, \delta_i = 1\} ] \notag \\
-    &= \delta_i \left[\dl(y_i \mid \x_i,\btheta) -  \frac{E^w\{ \dl (y_i \mid \x_i,\btheta) \pi(y_i,\x_i;\vartheta) \mid \x_i\}}{E^w\{ \pi(y_i,\x_i;\vartheta) \mid \x_i\}}  \right],
+    \dl_{SM}(\btheta; \x_i, y_i, \delta_i) &= \delta_i [\dl^w(\btheta; \x_i, y_i) - \Exp\{\dl^w(\btheta; \x_i, y_i) \mid \x_i, \delta_i = 1\} ] \notag \\
+    &= \delta_i \left[\dl^w(\btheta; \x_i, y_i) -  \frac{\Exp^w \{ \dl^w (\btheta; \x_i, y_i) \pi(\x_i, y_i;\vartheta) \mid \x_i\}}{\bapi^w(\x_i; \btheta, \vartheta)}  \right],
 \end{align}
-and the estimator of MSCLE under model misspecification $\htheta_{SM}$ is solved through
+where $\bapi^w(\x_i; \btheta, \vartheta) = \int f^w(y \mid \x_i,\btheta) \pi(\x_i, y; \vartheta) \mathrm{d}y$.
+Here $\Exp^w\{\cdot \mid \x_i\}$ denotes the conditional expectation over $y$ under the working model $f^w(y \mid \x_i; \btheta)$, which arises from differentiating the log of the working conditional distribution $f^w(y \mid \x_i, \delta_i=1; \btheta)$. 
+This is distinct from $\Exp$, which denotes expectation over $(\x, y, \delta)$ under the true data-generating distribution and all expectations in the asymptotic analysis are taken under $\Exp$, regardless of the working model $\ell^w$ used to define the estimator. 
+
+Takinghe estimator of MSCLE under model misspecification $\btheta_{SM}$ is solved through
 \begin{equation*}
-    \htheta_{SM} = \arg\max_{\btheta} \frac{1}{N} \sum_{i=1}^{N} \psi_{SM}(\btheta; \x_i, y_i, \delta_i).
+    \htheta_{SM} = \arg\max_{\btheta} \frac{1}{N} \sum_{i=1}^{N} \dl_{SM}(\btheta; \x_i, y_i, \delta_i).
 \end{equation*}
-% \begin{align}
-%         \dl_{SM}(\btheta) = \sum_{i=1}^{N} \delta_i \left[ \dl(\btheta; \x_i, y_i) - \E^w\{\dl(\btheta; \x_i, y_i) \mid \x_i, \delta_i = 1\} \right],
-% \end{align}
-% where
-% \begin{equation*}
-%     \E^w\{\dl(\btheta; \x_i, y_i) \mid \x_i, \delta_i = 1\} = \frac{\E^w\{\dl(\btheta; \x_i, y_i) \pi(\x_i, y_i) \mid \x_i\}}{\E^w\{\pi(\x_i, y_i) \mid \x_i\}}
-% \end{equation*}
-The MSCLE is consistent to the $\htheta_{ls}$ that solves the following population estimation equation \citet{wang2022maximum} as
-\begin{align}
-        \Exp^t \left[ \Exp^t \left\{ \dl(\htheta_{ls}; \x, y) \pi(\x,y;\vartheta) \mid \x \right\}  -\frac{\Exp^t \left\{ \pi(\x,y;\vartheta) \mid \x \right\}}{\Exp^w \left\{ \pi(\x,y;\vartheta) \mid \x \right\} } \Exp^w \left\{ \dl(\htheta_{ls}; \x, y) \pi(\x,y;\vartheta) \right\} \right] = 0,
+
+The MSCLE is consistent to the $\htheta_{ls}$ that solves the following estimation equation \citet{wang2022maximum} as
+\begin{align}\label{eq:theta_ls}
+        \Exp \left[ \Exp \left\{ \dl^w(\btheta_{ls}; \x, y) \pi(\x,y;\vartheta) \mid \x \right\}  -\frac{\Exp \left\{ \pi(\x,y;\vartheta) \mid \x \right\}}{\Exp^w \left\{ \pi(\x,y;\vartheta) \mid \x \right\} } \Exp^w \left\{ \dl^w(\btheta_{ls}; \x, y) \pi(\x,y;\vartheta) \right\} \right] = 0.
     \end{align}
-where $\vartheta$ is the pilot parameter which is estimated through a pilot subsample, on which informative subsampling probabilities may depend in practice.
 Besides, $\btheta_l$ and $\btheta_{ls}$ are different in general, although they can be the same under the special case of the local case-control subsampling.
 
 
@@ -151,12 +145,13 @@ We next discuss the property of IPW and MSCLE when model is misspecificated.
 We first give the following assumptions. 
 \begin{assumption}
     \begin{itemize}
-        \item[(1)] $\| \psi_{\mathcal{T}} (\btheta; \x, y, \delta)\|^2$ are integrable, where $\mathcal{T} = \{W,$ $SM\}$ and $\|A\| = tr^{1/2} (A^\top A)$ is the norm for a vector or matrix $A$.
-        \item[(2)] The parameter space $\btheta$ is compact and the sencond and third order partial derivative of $\ell (\btheta; \x, y)$ and $\log \bapi(\x, y)$ with respect to any components of $\btheta$ is bounded in absolute value by an integrable function $B(\x; y)$ that does not depend on $\btheta$. Moreover, $\Exp[B^2(\x; y)] < \infty$.
-        \item[(3)] $\left[\frac{\dl( \btheta_l)^{\otimes 2}}{\pi(\x, y)}\right]$ is integrable and for a column vector, $A^{\otimes 2} = A A^\top$.
+        \item[(1)] $\| \dl_{\mathcal{T}}^w (\btheta; \x, y, \delta)\|^2$ are integrable, where $\mathcal{T} = \{W,$ $SM\}$ and $\|A\| = tr^{1/2} (A^\top A)$ is the norm for a vector or matrix $A$.
+        {\color{red} $\dl_{\mathcal{T}}^w (\btheta; \x, y, \delta)$ represents the function under the assumed working model. Then we have to limit the choice of working model. Is this necessary?}
+        \item[(2)] The parameter space $\btheta$ is compact and the sencond and third order partial derivative of $\ell^w (\btheta; \x, y)$ and $\log \bapi(\x, y)$ with respect to any components of $\btheta$ is bounded in absolute value by an integrable function $B(\x; y)$ that does not depend on $\btheta$. Moreover, $\Exp[B^2(\x; y)] < \infty$.
+        \item[(3)] $\left[\frac{\dl^w( \btheta_l)^{\otimes 2}}{\pi(\x, y)}\right]$ is integrable and for a column vector, $A^{\otimes 2} = A A^\top$.
         % \item[(3)] $\hat{A}_{\mathcal{T}}$ is a nonsingular matrix and the variance matrix $\Sigma_W^{-1}$ and $\Sigma_S^{-1}$ are finite and positive definite.
         % \item[(4)] $\btheta_0$ is the unique solution to the population minimization problem $\min\limits_{\btheta \in \Theta} \Exp [\dl (y\mid \x,\btheta)]$.
-        % \item[(5)] $\Exp[\nabla_{\btheta} \psi_{\mathcal{T}} (\btheta; \x, y, \delta)]$ is a finite and positive finite matrix.
+        % \item[(5)] $\Exp[\nabla_{\btheta} \dl_{\mathcal{T}} (\btheta; \x, y, \delta)]$ is a finite and positive finite matrix.
         % \item[(6)] $\Sigma_W^{-1} - \Sigma_S^{-1}$ is positive semidefinite. {\color{red} However, according to the Theorem 2 in \cite{wang2022maximum}, $\Sigma_W^{-1} \geq \Sigma_S^{-1}$, hence this condition is automatically satisfied. } 
     \end{itemize}
 \end{assumption}
@@ -166,34 +161,34 @@ We first give the following assumptions.
     \begin{align}
         \sqrt{N} (\htheta_W - \btheta_l) \sim \N(0, \Sigma_W^{-1}),
     \end{align}
-    where $\Sigma_W^{-1} = \Exp^t \left[\ddl( \btheta_l;\x, y)\right]^{-1} \Exp^t \left[\frac{\dl( \btheta_l;\x, y)^{\otimes 2}}{\pi(\x, y)}\right] \Exp^t \left[\ddl( \btheta_l;\x, y)\right]^{-\top}$.
+    where $\Sigma_W^{-1} = \Exp \left[\ddl^w( \btheta_l;\x, y)\right]^{-1} \Exp \left[\frac{\dl^w( \btheta_l;\x, y)^{\otimes 2}}{\pi(\x, y)}\right] \Exp \left[\ddl^w( \btheta_l;\x, y)\right]^{-\top}$.
 \end{proposition}
 
 \begin{proof}
-By~\eqref{eq:EW_mis}, $\Exp^t[\psi_W( \btheta_l; \x, y, \delta)] = \Exp^t[\dl( \btheta_l; \x, y)] = 0$, since $ \btheta_l$ is defined as the root of this equation.
-This holds under $\Exp^t[\cdot]$ without requiring $\Exp^t[\cdot] = \Exp^w[\cdot]$.
+By~\eqref{eq:EW_mis}, $\Exp [\dl^w( \btheta_l; \x, y, \delta)] = \Exp[\dl^w( \btheta_l; \x, y)] = 0$, since $ \btheta_l$ is defined as the root of this equation.
+This holds without requiring $\ell^w = \ell^t$.
 We assume that
 \begin{equation*}
-    A_W = \Exp^t \left[\nabla_{\btheta} \left(\frac{\delta}{\pi}\dl( \btheta_l;\x, y) \right)\right]= \Exp^t \left[\ddl( \btheta_l;\x, y)\right],
+    A_W = \Exp \left[\nabla_{\btheta} \left(\frac{\delta}{\pi}\dl^w( \btheta_l;\x, y) \right)\right]= \Exp \left[\ddl^w( \btheta_l;\x, y)\right],
 \end{equation*}
-where the equality uses $\Exp^t[\delta/\pi \mid \x, y] = 1$.
-To be sepcific, $A_W$ has the same expression as the expected Hessian of the full data log-likelihood evaluated at $ \btheta_l$ under $\Exp^t$.
+where the equality uses $\Exp[\delta/\pi \mid \x, y] = 1$, which follows from the sampling mechanism $\mathbb{P}(\delta=1 \mid \x, y) = \pi(\x, y)$ regardless of model specification.
+To be sepcific, $A_W$ has the same expression as the expected Hessian of the full data log-likelihood evaluated at $ \btheta_l$ under $\Exp$.
 
 
 \begin{align*}
-    B_W &= \Exp^t \left[\frac{\delta^2}{\pi^2(\x, y)} \dl( \btheta_l;\x, y)\dl( \btheta_l;\x, y)^\top\right]
-    = \Exp^t \left[\frac{\delta}{\pi^2(\x, y)} \dl( \btheta_l;\x, y)^{\otimes 2}\right]
-    = \Exp^t \left[\frac{\dl( \btheta_l;\x, y)^{\otimes 2}}{\pi(\x, y)}\right].
+    B_W &= \Exp \left[\frac{\delta^2}{\pi^2(\x, y)} \dl^w( \btheta_l;\x, y)\dl^w( \btheta_l;\x, y)^\top\right]
+    = \Exp \left[\frac{\delta}{\pi^2(\x, y)} \dl^w( \btheta_l;\x, y)^{\otimes 2}\right]
+    = \Exp \left[\frac{\dl^w( \btheta_l;\x, y)^{\otimes 2}}{\pi(\x, y)}\right].
 \end{align*}
-Given that $\Exp^t[\pi(\x, y)^{-1}\dl^{\otimes 2}( \btheta_l;\x, y)]$ to be finite in the Assumption 1(1) and(3), the multivariate CLT gives
+Given that $\Exp[\pi(\x, y)^{-1}\dl^w( \btheta_l;\x, y)^{\otimes 2}]$ to be finite in the Assumption 1(1) and(3), the multivariate CLT gives
 \begin{equation*}
-        \frac{1}{\sqrt{N}}\sum_{i=1}^{N} \psi_W(\btheta_l;  \x_i, y_i, \delta_i) \xrightarrow{d} \N(0, B_W).
+        \frac{1}{\sqrt{N}}\sum_{i=1}^{N} \dl^w(\btheta_l;  \x_i, y_i, \delta_i) \xrightarrow{d} \N(0, B_W).
 \end{equation*}
 
 Applying the Basic Corollary in page 2 of \citet{hjort2011asymptotics}, which can regardless the misspecification, we finish the proof. 
  
 \end{proof}
-Comparing with Eq.~\eqref{eq:SigW}, the variance matrix under the misspecification case is same with the one under correct case, except we use $\Exp^t$, whichi is the same with $\Exp$ in the Proposition~\ref{pro:ipwM}.
+Comparing with Eq.~\eqref{eq:SigW}, the variance matrix under the misspecification case is same with the one under correct case, except we use $\Exp$, whichi is the same with $\Exp$ in the Proposition~\ref{pro:ipwM}.
 
 \begin{proposition}
         Under the model misspecification and Assumption 1(1)-(3), $\htheta_{SM}$ has the asymptotic normality property that 
@@ -202,47 +197,56 @@ Comparing with Eq.~\eqref{eq:SigW}, the variance matrix under the misspecificati
     \end{align}
     where $\Sigma_{SM}^{-1} = A_{SM}^{-1} B_{SM} A_{SM}^{-\top}$, where
     \begin{align}\label{eq:ABSM}
-    A_{SM} &= \Exp^t \left[\nabla_{\btheta} \psi_{SM}(\btheta_{ls}; \x, y, \delta) \right] \notag \\
-    &= \Exp^t \left[ \delta \left(\ddl(\btheta_{ls}; \x, y) - \Exp^w [\ddl (\btheta; \x, y) \mid \x, \delta=1] - \Var^w [\dl (\btheta; \x, y) \mid \x, \delta=1] \right) \right], \\    
-    B_{SM} &= \Exp^t \left[\psi_{SM}(\btheta_{ls}; \x, y, \delta)\psi_{SM}(\btheta_{ls}; \x, y, \delta)^\top \right].
+    A_{SM} &= \Exp \left[\nabla_{\btheta} \dl_{SM}(\btheta_{ls}; \x, y, \delta) \right] \notag \\
+    &= \Exp \left[ \delta \left(\ddl(\btheta_{ls}; \x, y) - \Exp^w [\ddl (\btheta; \x, y) \mid \x, \delta=1] - \Var^w [\dl^w (\btheta; \x, y) \mid \x, \delta=1] \right) \right], \\    
+    B_{SM} &= \Exp \left[\dl_{SM}(\btheta_{ls}; \x, y, \delta)\dl_{SM}(\btheta_{ls}; \x, y, \delta)^\top \right],
 \end{align}
-
-Observe that $h(\btheta, \x)$ depends on the working model $f_w$ through the conditional expectations, even under misspecification.
+where $\Var^w[\dl^w(\btheta;\x,y) \mid \x, \delta=1]$ denotes the conditional covariance matrix under the working model,
+\begin{equation*}
+    \Var^w[\dl^w(\btheta;\x,y)\mid \x,\delta=1] 
+    = \Exp^w[\dl^w(\btheta;\x,y)^{\otimes 2}\mid \x,\delta=1]
+    - \Exp^w[\dl^w(\btheta;\x,y)\mid \x,\delta=1]^{\otimes 2}.
+\end{equation*}
 \end{proposition}
 
 \begin{proof}
+    By the definition of $\btheta_{ls}$ in Eq.~\eqref{eq:theta_ls}, we have 
+$\Exp[\dl_{SM}(\btheta_{ls};\x,y,\delta)] = 0$, where $\vartheta$ is treated as fixed throughout.
     Let
 \begin{align}\label{eq:h_def}
     h(\btheta, \x) 
     &= \nabla_{\btheta} \left[ \frac{\Exp^w \left\{
-    \dl(\btheta; \x, y) \pi(\x, y;\vartheta) 
+    \dl^w(\btheta; \x, y) \pi(\x, y;\vartheta) 
     \mid \x \right\}}
     {\Exp^w \left\{\pi(\x, y;\vartheta) 
     \mid \x \right\} } \right] \notag \\
-    &= \nabla_{\btheta} \left[ \frac{\int \dl(\btheta; \x, y)
-    \pi(\x, y) f_w(y|\x;\btheta) \mathrm{d}y}
-    {\int \pi(\x, y) f_w(y|\x;\btheta)\mathrm{d}y} \right] \notag \\
+    &= \nabla_{\btheta} \left[ \frac{\int \dl^w(\btheta; \x, y)
+    \pi(\x, y;\vartheta) f^w(y|\x;\btheta) \mathrm{d}y}
+    {\int \pi(\x, y;\vartheta) f^w(y|\x;\btheta)\mathrm{d}y} \right] \notag \\
     &= \nabla_{\btheta}^2 \log \bapi(\x, y)
     = \frac{\nabla_{\btheta}^2 \bapi(\x, y)}{\bapi(\x, y)} - \frac{\nabla_{\btheta} \bapi(\x, y) ^{\otimes 2}}{\bapi(\x, y)^2}.
 \end{align}
-Since the subsampling probability satisfies $0 < \pi(\x, y) \leq 1$, the products $\pi(\x, y) \nabla^k_{\btheta} f_w(y|\x;\btheta)$ 
+Since the subsampling probability satisfies $0 < \pi(\x, y) \leq 1$, the products $\pi(\x, y) \nabla^k_{\btheta} f^w(y|\x;\btheta)$ 
 for $k = 1, 2$ are dominated by integrable functions of $(\x, y)$ uniformly in $\btheta \in \Theta$.
-By the dominated convergence theorem, the derivatives $\nabla^k_{\btheta} \bar\pi(\x;\btheta) = \int \pi(\x, y) \nabla^k_{\btheta} f_w(y|\x;\btheta) \mathrm{d}y$ exist and are continuous in $\btheta$ for $k = 1, 2$.
+By the dominated convergence theorem, the derivatives $\nabla^k_{\btheta} \bar\pi(\x;\btheta) = \int \pi(\x, y) \nabla^k_{\btheta} f^w(y|\x;\btheta) \mathrm{d}y$ exist and are continuous in $\btheta$ for $k = 1, 2$.
 Consequently, in Eq.~\ref{eq:h_def}, $h(\btheta, \x) = \nabla_{\btheta} \log \bar\pi(\x;\btheta)$ and its derivatives up to second order are well-defined, and the third-order partial derivatives of $\log\bar\pi(\x;\btheta)$ are also bounded by $B(\x, y)$.
 We have
 \begin{align*}
-    \nabla_{\btheta}^2 \bapi(\x, y) &= \int [\ddl(\btheta; \x, y) + \dl(\btheta; \x, y)^{\otimes 2}] f_w(y|\x;\btheta) \mathrm{d}y \notag \\
-    &= \Exp^w[\pi((\x, y)) [\ddl(\btheta; \x, y) + \dl(\btheta; \x, y)^{\otimes 2}] \mid \x],
+    \nabla_{\btheta}^2 \bapi(\x, y) &= \int \pi(\x,y;\vartheta) [\ddl^w(\btheta; \x, y) + \dl^w(\btheta; \x, y)^{\otimes 2}] f^w(y|\x;\btheta) \mathrm{d}y \notag \\
+    &= \Exp^w[\pi((\x, y;\vartheta)) [\ddl^w(\btheta; \x, y) + \dl^w(\btheta; \x, y)^{\otimes 2}] \mid \x],
 \end{align*}
 then 
 \begin{equation*}
-    \frac{\nabla_{\btheta}^2 \bapi(\x, y)}{\bapi(\x, y)} = \Exp^w[\ddl(\btheta; \x, y) + \dl(\btheta; \x, y)^{\otimes 2} \mid \x, \delta=1],
+    \frac{\nabla_{\btheta}^2 \bapi(\x, y)}{\bapi(\x, y)} = \Exp^w[\ddl^w(\btheta; \x, y) + \dl^w(\btheta; \x, y)^{\otimes 2} \mid \x, \delta=1],
 \end{equation*}
+
 and 
 \begin{equation*}
-    \frac{\nabla_{\btheta} \bapi(\x, y) ^{\otimes 2}}{\bapi(\x, y)^2} = \Exp^w[\dl(\btheta; \x, y) \mid \x, \delta=1]^{\otimes 2} .
+    \frac{\nabla_{\btheta} \bapi(\x, y) ^{\otimes 2}}{\bapi(\x, y)^2} = \Exp^w[\dl^w(\btheta; \x, y) \mid \x, \delta=1]^{\otimes 2} .
 \end{equation*}
-Similarly, $\nabla_{\btheta}^2 \left[ \frac{\int \dl(\btheta; \x, y)\pi(\x, y) f_w(y|\x;\btheta) \mathrm{d}y} {\int \pi(\x, y) f_w(y|\x;\btheta)\mathrm{d}y} \right]$ also involves the third derivation of $\ell$ and the moment of $f^w(y \mid \x, \delta=1)$. 
+Similarly, $\nabla_{\btheta}^2 \left[ \frac{\int \dl^w(\btheta; \x, y)\pi(\x, y;\vartheta) f^w(y|\x;\btheta) \mathrm{d}y} {\int \pi(\x, y;\vartheta) f^w(y|\x;\btheta)\mathrm{d}y} \right]$ also involves the third derivation of $\ell^w$ and the moment of $f^w(y \mid \x, \delta=1)$. 
+Since $\vartheta$ is fixed, $\pi(\x,y;\vartheta)$ is a bounded 
+function of $(\x,y)$ with $0 < \pi(\x,y;\vartheta) \leq 1$.
 According to the Assumption 1(2), they can be controlled through the $B(\x, y)$, which satisfying the condition of basic corollary.
 
 \end{proof}
@@ -264,13 +268,13 @@ In contrast, the MSCLE is asymptotically more efficient than the IPW estimator w
 \end{proposition}
 
 \begin{proof}
-We recall that $\btheta_l$ is the solution of
+We recall that under the $H_0$ hypothesis $\btheta_l$ is the solution of
 \begin{equation*}
-     \Exp^t [\dl (\btheta; \x,y)]= 0,
+     \Exp [\dl (\btheta; \x,y)]= 0,
 \end{equation*}
 and $\btheta_{ls}$ is the solution of 
 \begin{equation*}
-    \Exp^t [\dl_S(\btheta; \x, y, \delta) ] =0.
+    \Exp [\dl_S(\btheta; \x, y, \delta) ] =0.
 \end{equation*}
 When the model is correct, $\btheta_l = \btheta_{ls}$
 Thus, under the $H_0$ hypothesis, $\htheta_{SM}$ and $\htheta_{S}$ converges to the same value.
@@ -294,40 +298,40 @@ Consider a joint distribution of
 \end{pmatrix}
 \cdot \frac{1}{\sqrt{N}} \sum_{i=1}^{N} 
 \begin{pmatrix}
-    \psi_W(\btheta_0; \x_i, y_i, \delta_i) \\
-    \psi_S(\btheta_0; \x_i, y_i, \delta_i) 
+    \dl_W(\btheta_0; \x_i, y_i, \delta_i) \\
+    \dl_S(\btheta_0; \x_i, y_i, \delta_i) 
 \end{pmatrix} + \op,
 \end{align}
 where 
 \begin{align}\label{eq:AW}
-    A_W &= \Exp [- \nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)] = \Exp [- \frac{\delta}{\pi(\x, y)} \ddl(\btheta_0; \x, y, \delta)] \notag \\
+    A_W &= \Exp [- \nabla_{\btheta} \dl_W (\btheta_0; \x, y, \delta)] = \Exp [- \frac{\delta}{\pi(\x, y)} \ddl(\btheta_0; \x, y, \delta)] \notag \\
     &= \Exp [-\ddl (y \mid \x, \btheta_0)] ,
 \end{align} 
 and
 \begin{align}
-    A_S  = \Exp [-\nabla_{\btheta} \psi_S(\btheta_0; \x, y, \delta)] = \Exp [-\ddl_S(\btheta_0; \x, y, \delta)] = \Sigma_S,
+    A_S  = \Exp [-\nabla_{\btheta} \dl_S(\btheta_0; \x, y, \delta)] = \Exp [-\ddl_S(\btheta_0; \x, y, \delta)] = \Sigma_S,
 \end{align}
 with the conclusion in \cite{wang2022maximum} (A.12).
 
 Consider the difference estimator $D_N = \htheta_W - \htheta_S$, first we have $\Exp[\htheta_W - \htheta_S] = 0$.
 We next note that 
 \begin{align*}
-    \sqrt{N} (\htheta_W - \htheta_S) &= \frac{1}{\sqrt{N}} \sum_{i-1}^{N} [-A_W^{-1} \psi_W(\btheta_0; \x_i, y_i, \delta_i) + A_S^{-1} \psi_S(\btheta_0; \x_i, y_i, \delta_i)] +\op \\
+    \sqrt{N} (\htheta_W - \htheta_S) &= \frac{1}{\sqrt{N}} \sum_{i-1}^{N} [-A_W^{-1} \dl_W(\btheta_0; \x_i, y_i, \delta_i) + A_S^{-1} \dl_S(\btheta_0; \x_i, y_i, \delta_i)] +\op \\
     & := \frac{1}{\sqrt{N}} \sum_{i-1}^{N} \mathtt{D}_i(\btheta_0) + \op.
 \end{align*}
 Then we have 
 \begin{align}
    & \Exp[\mathtt{D}_i(\btheta_0) ^{\otimes 2}] \notag \\
-   &= \Exp[ \{A_W^{-1} \psi_W (\btheta_0; \x_i, y_i, \delta_i) - A_S^{-1} \psi_S (\btheta_0; \x_i, y_i, \delta_i)\} \{A_W^{-1} \psi_W (\btheta_0; \x_i, y_i, \delta_i) - A_S^{-1} \psi_S (\btheta_0; \x_i, y_i, \delta_i)\}^\top  \mid \x_i] \notag \\
-   &= \Exp[\{A_W^{-1} \psi_W (\btheta_0; \x_i, y_i, \delta_i)^{\otimes 2} A_W^{-1} \} \mid \x_i] + \Exp[\{ A_S^{-1} \psi_S (\btheta_0; \x_i, y_i, \delta_i)^{\otimes 2} A_S^{-1} \} \mid \x_i] \notag \\
-   &- \Exp[\{ A_W^{-1} \psi_W (\btheta_0; \x_i, y_i, \delta_i) \psi_S (\btheta_0; \x_i, y_i, \delta_i)^\top A_S^{-1} \} \mid \x_i] \notag \\
-   &- \Exp[\{ A_S^{-1} \psi_S (\btheta_0; \x_i, y_i, \delta_i) \psi_W (\btheta_0; \x_i, y_i, \delta_i)^\top A_W^{-1} \} \mid \x_i].
+   &= \Exp[ \{A_W^{-1} \dl_W (\btheta_0; \x_i, y_i, \delta_i) - A_S^{-1} \dl_S (\btheta_0; \x_i, y_i, \delta_i)\} \{A_W^{-1} \dl_W (\btheta_0; \x_i, y_i, \delta_i) - A_S^{-1} \dl_S (\btheta_0; \x_i, y_i, \delta_i)\}^\top  \mid \x_i] \notag \\
+   &= \Exp[\{A_W^{-1} \dl_W (\btheta_0; \x_i, y_i, \delta_i)^{\otimes 2} A_W^{-1} \} \mid \x_i] + \Exp[\{ A_S^{-1} \dl_S (\btheta_0; \x_i, y_i, \delta_i)^{\otimes 2} A_S^{-1} \} \mid \x_i] \notag \\
+   &- \Exp[\{ A_W^{-1} \dl_W (\btheta_0; \x_i, y_i, \delta_i) \dl_S (\btheta_0; \x_i, y_i, \delta_i)^\top A_S^{-1} \} \mid \x_i] \notag \\
+   &- \Exp[\{ A_S^{-1} \dl_S (\btheta_0; \x_i, y_i, \delta_i) \dl_W (\btheta_0; \x_i, y_i, \delta_i)^\top A_W^{-1} \} \mid \x_i].
    %&:= \Sigma_W^{-1} + \Sigma_S^{-1} - A_W^{-1} B_{WS} A_S^{-1} - A_S^{-1} B_{WS}^\top A_W^{-1}.
 \end{align}
 Let, 
 \begin{align}
     \notag
-    B_{WS} &= \Exp [\{ \psi_W (\btheta_0; \x_i, y_i, \delta_i) \psi_S (\btheta_0; \x_i, y_i, \delta_i)^\top \}\mid \x_i] \notag \\
+    B_{WS} &= \Exp [\{ \dl_W (\btheta_0; \x_i, y_i, \delta_i) \dl_S (\btheta_0; \x_i, y_i, \delta_i)^\top \}\mid \x_i] \notag \\
     &= \Exp \left[\left\{ \frac{\delta_i}{\pi(\x_i,y_i)} \dl(y_i\mid \x_i,\btheta_0) \left( \dl(y_i\mid \x_i,\btheta_0) - \nabla_{\btheta} \log \bapi(\x_i)  \right)^\top \right\} \right] \notag \\ 
     &= \Exp_{y_i\mid \x_i} \left[ \Exp_{\delta_i \mid \x_i,,y_i}  \left[ \frac{\delta}{\pi(\x_i, y_i)} \right] \dl(y_i\mid \x_i,\btheta_0) \left( \dl(y_i\mid \x_i,\btheta_0) - \nabla_{\btheta} \log \bapi(\x_i)  \right)^\top \right]. 
 \end{align}
@@ -342,7 +346,7 @@ with $\Exp_{y_i\mid \x_i} \left[ \dl(y_i\mid \x_i,\btheta_0) \right]=0$.
 Then,
 \begin{align}
     & \frac{1}{N} \sum_{i=1}^{N} \Exp[\mathtt{D}_i(\btheta_0) ^{\otimes 2} \mid \x_i] \notag \\
-    &= \frac{1}{N} \sum_{i=1}^{N} \left\{ \Exp[\{A_W^{-1} \psi_W (\btheta_0; \x_i, y_i, \delta_i)^{\otimes 2} A_W^{-1} \} \mid \x_i] + \Exp[\{ A_S^{-1} \psi_S (\btheta_0; \x_i, y_i, \delta_i)^{\otimes 2} A_S^{-1} \} \mid \x_i] \right. \notag \\
+    &= \frac{1}{N} \sum_{i=1}^{N} \left\{ \Exp[\{A_W^{-1} \dl_W (\btheta_0; \x_i, y_i, \delta_i)^{\otimes 2} A_W^{-1} \} \mid \x_i] + \Exp[\{ A_S^{-1} \dl_S (\btheta_0; \x_i, y_i, \delta_i)^{\otimes 2} A_S^{-1} \} \mid \x_i] \right. \notag \\
      &- \left. A_W^{-1} \Exp_{y_i\mid \x_i} \left[ \dl(y_i\mid \x_i,\btheta_0)^{\otimes^2} \right] A_S^{-1} -  A_S^{-1} \Exp_{y_i\mid \x_i} \left[ \dl(y_i\mid \x_i,\btheta_0)^{\otimes^2} \right] A_W^{-1}\right\} \notag \\
     & \rightarrow \Sigma_W^{-1} + \Sigma_S^{-1} - 2 \Sigma_S^{-1} \notag \\
     &= \Sigma_W^{-1} -\Sigma_S^{-1},
@@ -351,27 +355,27 @@ with Eq.~\ref{eq:AW} and
 \begin{align}
     \frac{1}{N} \sum_{i=1}^{N} \Exp_{y_i\mid \x_i} \left[ \dl(y_i\mid \x_i,\btheta_0)^{\otimes^2} \right] \rightarrow  \Exp \left[ \dl(y \mid \x,\btheta_0)^{\otimes^2} \right] = A_W.
 \end{align} 
-Besides, according to the conclusion in \cite{wang2022maximum} (A.12) that $-\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S(\btheta_0; \x, y, \delta) = \Sigma_S + \op$,
-and $A_S  = \Exp [-\nabla_{\btheta} \psi_S(\btheta_0; \x, y, \delta)] = \Sigma_S$.
+Besides, according to the conclusion in \cite{wang2022maximum} (A.12) that $-\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \dl_S(\btheta_0; \x, y, \delta) = \Sigma_S + \op$,
+and $A_S  = \Exp [-\nabla_{\btheta} \dl_S(\btheta_0; \x, y, \delta)] = \Sigma_S$.
 
 Next we verfiy the Lindeberg-Feller condition that 
 \begin{align*}
     & \Exp[\|\mathtt{D}_i(\btheta_0)\|^2 \I\{\|\mathtt{D}_i(\btheta_0)\|> \epsilon \sqrt{N} \} \mid \x_i] \\
-    & \leq \Exp[\{2 \|A_W^{-1} \psi_W(\btheta_0;\x, y, \delta) \|^2 + 2 \|\Sigma_S^{-1} \psi_S(\btheta_0;\x, y, \delta) \|^2\} \I\{\|\mathtt{D}_i(\btheta_0)\|> \epsilon \sqrt{N} \} \mid \x_i ] \\
-    & \leq 4 \Exp[ \|A_W^{-1} \psi_W(\btheta_0;\x, y, \delta) \|^2 \I\{\|A_W^{-1} \psi_W(\btheta_0;\x, y, \delta) \| > \epsilon \sqrt{N}/2 \}\\
-    &+  \|\Sigma_S^{-1} \psi_S(\btheta_0;\x, y, \delta) \|^2   \I\{\|\Sigma_S^{-1} \psi_S(\btheta_0;\x, y, \delta)  \| > \epsilon \sqrt{N}/2 \}].
+    & \leq \Exp[\{2 \|A_W^{-1} \dl_W(\btheta_0;\x, y, \delta) \|^2 + 2 \|\Sigma_S^{-1} \dl_S(\btheta_0;\x, y, \delta) \|^2\} \I\{\|\mathtt{D}_i(\btheta_0)\|> \epsilon \sqrt{N} \} \mid \x_i ] \\
+    & \leq 4 \Exp[ \|A_W^{-1} \dl_W(\btheta_0;\x, y, \delta) \|^2 \I\{\|A_W^{-1} \dl_W(\btheta_0;\x, y, \delta) \| > \epsilon \sqrt{N}/2 \}\\
+    &+  \|\Sigma_S^{-1} \dl_S(\btheta_0;\x, y, \delta) \|^2   \I\{\|\Sigma_S^{-1} \dl_S(\btheta_0;\x, y, \delta)  \| > \epsilon \sqrt{N}/2 \}].
 \end{align*}
 Based on the Assumption 1(1)-(3),
 \begin{align*}
-    \Exp [\|A_W^{-1} \psi_W(\btheta_0;\x, y, \delta)\|^2] < \infty,
+    \Exp [\|A_W^{-1} \dl_W(\btheta_0;\x, y, \delta)\|^2] < \infty,
 \end{align*}
 and based on the dominated control theorem, we have
 \begin{align*}
-    \lN \Exp[ \|A_W^{-1} \psi_W(\btheta_0;\x, y, \delta) \|^2 \I\{\|A_W^{-1} \psi_W(\btheta_0;\x, y, \delta) \| > \epsilon \sqrt{N}/2 \}] \xrightarrow 0
+    \lN \Exp[ \|A_W^{-1} \dl_W(\btheta_0;\x, y, \delta) \|^2 \I\{\|A_W^{-1} \dl_W(\btheta_0;\x, y, \delta) \| > \epsilon \sqrt{N}/2 \}] \xrightarrow 0
 \end{align*}
 Similarly, we have
 \begin{align*}
-   \lN  \Exp[\|\Sigma_S^{-1} \psi_S(\btheta_0;\x, y, \delta) \|^2   \I\{\|\Sigma_S^{-1} \psi_S(\btheta_0;\x, y, \delta)  \| > \epsilon \sqrt{N}/2 \}] \xrightarrow 0,
+   \lN  \Exp[\|\Sigma_S^{-1} \dl_S(\btheta_0;\x, y, \delta) \|^2   \I\{\|\Sigma_S^{-1} \dl_S(\btheta_0;\x, y, \delta)  \| > \epsilon \sqrt{N}/2 \}] \xrightarrow 0,
 \end{align*}
 which prove that $\mathtt{D}_i$ satisfy the Lindeberg-Feller condition.
 Thus we complete the proof.
@@ -494,7 +498,7 @@ R_N(w) &= N tr(\Exp(\Delta_N \Delta_N^\top)) = \Exp (\Delta_N^\top \Delta_N) \no
 % where $\Delta = \lN \Delta_N$. 
 % Since
 % \begin{equation*}
-%     \Exp[\|\Delta_N\|^2] \leq \Exp [C(\|\frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_{W}(\x_i,y_i,\delta_i)\|^2 + \|\frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_{SM}(\x_i,y_i,\delta_i)\|^2)] < \infty,
+%     \Exp[\|\Delta_N\|^2] \leq \Exp [C(\|\frac{1}{\sqrt{N}} \sum_{i=1}^{N} \dl_{W}(\x_i,y_i,\delta_i)\|^2 + \|\frac{1}{\sqrt{N}} \sum_{i=1}^{N} \dl_{SM}(\x_i,y_i,\delta_i)\|^2)] < \infty,
 % \end{equation*}
 % based on the Assumption 1(1). Then we prove that $\|\Delta_N\|^2$ is uniformly integratable.
 % Based on the Vitali convergence theorem, $\Exp[\|\Delta_N\|^2] \cvp \Exp[\|\Delta\|^2]$.
@@ -535,7 +539,47 @@ R_N(w) &= N tr(\Exp(\Delta_N \Delta_N^\top)) = \Exp (\Delta_N^\top \Delta_N) \no
 
 \section{Simulation}
 
-The simulation settings are the same as the one in \citet{wang2022maximum}, and we compare the log of empirical MSE of the estimators of IPW, MSCLE, the model averaging estimators under different assumptions of $w(\cdot)$, where 
+We evaluate the IPW and MSCLE using the multi-class logistic regression and Poisson regression frameworks in \citet{wang2022maximum}. The full data size is fixed at $N = 10^6$, and subsample size of $n = 2000$ is considered. 
+The response variable takes $K = 3$ categories, and each covariate vector is of the form $\x_i = (1, \x_{-1,i}^\top)^\top \in \mathbb{R}^4$, where the leading $1$ accommodates the intercept. The total number of unknown regression coefficients is therefore eight, and the true parameter is set to $\btheta_{-K} = (0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40)^\top$.
+
+The slope covariates $\x_{-1,i}$ are independently drawn under four distributional settings:
+\begin{enumerate}[(a)]
+    \item Multivariate normal distribution: $\x_{-1,i} \sim \N(0, \bOmega)$, where $\bOmega_{jk} = 0.5^{|j-k|}$. 
+
+    \item Multivariate log-normal distribution: $\x_{-1,i} = \exp(\z_i)$ with $\z_i \sim \N(0, \bOmega)$ and $\bOmega$ as in~(a). 
+    
+    \item Multivariate $t$ distribution: $\x_{-1,i} \sim T_3(0, \bOmega)$ 
+    with $\bOmega$ as in~(a). This symmetric distribution shares a similar response composition to~(a) but exhibits heavier tails.
+
+    \item Independent exponential distribution: Each component of $\x_{-1,i}$ is independently drawn from $\text{Exp}(1)$. 
+\end{enumerate}
+
+We also assess the estimators under the Poisson regression model, using the same full data size and subsample sizes. The covariate vector is $\x_i = (1, \x_{-1,i}^\top)^\top \in \mathbb{R}^7$, and the true parameter is $\btheta = 0.25 * \mathbf{1}$, where $\mathbf{1}$ is a 7-dimension vector whose entries are all equal to $1$.
+Four distributions are considered for the slope covariates $\x_{-1,i}$:
+\begin{enumerate}[(a)]
+    \item Independent uniform distribution: Each component of $\x_{-1,i}$ follows $\text{Uniform}(0,1)$ independently. 
+
+    \item Independent Beta distribution: Each component of $\x_{-1,i}$ follows $\text{Beta}(2, 5)$ independently. 
+
+    \item Multivariate normal distribution: $\x_{-1,i} \sim \N(0, \bOmega)$ with $\bOmega$ defined as the one in logistic regression model.
+
+    \item Independent exponential distribution: Each component of $\x_{-1,i}$ follows $\text{Exp}(2)$ independently.
+\end{enumerate}
+
+Each simulation is replicated $R = 1000$ times. At each replication, a pilot sample of size $400$ is drawn uniformly to obtain the pilot estimate $\tilde{\btheta}_{plt}$, which is calculated through the gradient-normal subsampling probability. 
+To present the model missepcification, instead of using a consistent pilot, we set
+\begin{equation*}
+    \tilde{\btheta}_{\text{plt}} = \btheta_0 + \lambda \cdot \mathbf{1},
+\end{equation*}
+where $\lambda \in [-0.5, 0.5]$ governs the degree of pilot misspecification, 
+with $\lambda = 0$ recovering the consistent case. 
+The empirical MSE is computed as
+\begin{equation*}
+    \widehat{\text{MSE}} = \frac{1}{R}\sum_{r=1}^{R} 
+    \|\htheta_{-K}^{(r)} - \btheta_{-K}\|^2.
+\end{equation*}
+where $\htheta_{-K}^{(r)}$ is the estimate at the $r$-th replication.
+Five estimators are compared: the IPW estimator, the MSCLE estimator, and the model averaging estimators under three different assumptions of $w(\cdot)$, where 
 \begin{itemize}
     \item Hard criteria: $w(H_N) = \I\{H_N \geq c_\alpha\}$, which brings $\htheta_{NA} = \btheta_{N}$;
     \item Sigmoid weighting: $w(H_N) = \frac{1}{1+\exp\{-(H_N-c_\alpha)/s\}}$, where $s$ is the smoothing parameter.
@@ -545,16 +589,26 @@ The simulation settings are the same as the one in \citet{wang2022maximum}, and 
 \end{cases}$
 \end{itemize}
 We fix the smoothing parameter $s$
-as 2 and optimize $c_\alpha$. Through the optimal $c_\alpha$, we can obtain the corresponding optimal $w$ based on the different functions. Except for the We also present the proportion of tending to MSCLE in Figures~\ref{fig:logi_w} and \ref{fig:poi_w}. When the optimal weight $w < 0.1$, then we consider that the optimal estimator $\htheta_{NA}$ is more closed to MSCLE. The proportion of choosing MSCLE is calculated by the percentage of $w < 0.1$ in all simulation iterations.
+as 2 and optimize $c_\alpha$. Through the optimal $c_\alpha$, we can obtain the corresponding optimal $w$ based on the different functions.
 
-Figures~\ref{fig:logi}-\ref{fig:poi} illustrate the log of empirical MSEs performance of subsample estimators in logistic regression under three different weight functions. Overall, all three weighting schemes achieve smaller MSEs than the IPW method under most cases. 
+Figures~\ref{fig:logi}-\ref{fig:poi} illustrate the log of empirical MSEs performance of subsample estimators in logistic regression under three different weight functions. 
+We restrict the displayed range of $\lambda$ to $[-0.3, 0.3]$. When $|\lambda|$ is large, the resulting log-MSE values become substantially inflated, which compresses the scale and obscures the behavior of the estimators in the region of moderate misspecification. 
+Restricting the range therefore allows for a clearer visual comparison 
+across methods.
+Overall, all three weighting schemes achieve smaller MSEs than the IPW method under most cases. 
 In particular, the sigmoid weight function attains the smallest MSE in most cases, and in several scenarios even outperforms the MSCLE estimator, see the normal and exponential distributed covariate in logistic regression and lognormal and $T_3$ distributed covarite in Poisson distribution. 
 On the other hand, the hard-threshold and smoothing weight functions exhibit very similar performance and outperforms IPW in most cases excepte for the normal and exponential distributed covariate in logistic regression. 
 Besides, the differences among the weighting schemes are much more pronounced under the logistic regression model, whereas under the Poisson regression model the performances of these methods become considerably closer. 
 
-We present the proportion of selecting the MSCLE-oriented estimator in Figures~\ref{fig:logi_w} and \ref{fig:poi_w}. 
-Specifically, when the optimal weight satisfies $w < 0.1$, we regard the resulting optimal estimator $\hat{\theta}_{NA}$ as being closer to the MSCLE estimator.
-Figures~\ref{fig:logi_w} and \ref{fig:poi_w} show that the sigmoid weight function consistently adopts the MSCLE estimator with a smaller probability. 
+We also present the proportion of tending to MSCLE in Figures~\ref{fig:logi_w} and \ref{fig:poi_w}. When the optimal weight $w < 0.1$, then we we regard the resulting optimal estimator $\htheta_{NA}$ as being closer to the MSCLE estimator. The proportion of choosing MSCLE is calculated by the percentage of $w < 0.1$ in all simulation iterations.
+These quantities remain well-behaved across the full range; accordingly, thosefigures retain $\lambda \in [-0.5, 0.5]$.
+However for the case~(d) of Poisson regression in particular, there is an additional numerical consideration that motivates the same restriction. 
+The subsampling probabilities are constructed using the pilot-based fitted values $\tilde{\mu}_i = \exp(\x_i^\top\tilde{\btheta}_{\mathrm{plt}})$. 
+So a moderate $|\lambda|$ can produce a substantial distortion in $\tilde{\mu}_i$. As a result, large $|\lambda|$ leads to extreme subsampling weights and an ill-conditioned Hessian in the MSCLE fitting step, making the estimators unreliable in that regime. We therefore report log-MSE results for $\lambda \in [-0.3, 0.3]$ in this setting as well.
+
+Figures~\ref{fig:logi_w} and \ref{fig:poi_w} show that
+when $\lambda$ is larger, hard-threshold and smoothing functions tend to choose the IPW with a lower weight proportion of MSCLE, particular in the cases (b)-(c) of logistic regression, and cases (a), (b) and (d) of Poisson regression. 
+Besides, the sigmoid weight function consistently adopts the MSCLE estimator with a smaller probability. 
 In contrast, the weight proportions associated with the hard-threshold and smoothing functions are both close to one, indicating a much stronger preference toward the MSCLE estimator. 
 However, despite the fact that the MSCLE estimator itself yields a smaller MSE, the two weighting functions, i.e. hard and smoothing functions that more strongly favor MSCLE do not demonstrate a corresponding improvement in overall MSE performance. 
 This phenomenon suggests that assigning a larger weight to MSCLE does not necessarily guarantee superior finite-sample performance, and that a more adaptive weighting mechanism, such as the sigmoid function, may provide a better balance between the competing estimators.
@@ -564,14 +618,14 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/type1case1nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/type1case1nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are normal}
         \label{fig:logi_1}
     \end{subfigure}
     \hfill  
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/type1case2nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/type1case2nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are lognormal}
         \label{fig:logi_2}
     \end{subfigure}
@@ -580,14 +634,14 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
     
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/type1case3nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/type1case3nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are $T_3$}
         \label{fig:logi_3}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/type1case4nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/type1case4nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are exponential}
         \label{fig:logi_4}
     \end{subfigure}
@@ -602,14 +656,14 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/wprop_type1case1nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/wprop_type1case1nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are normal}
         \label{fig:logi_1w}
     \end{subfigure}
     \hfill  
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/wprop_type1case2nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/wprop_type1case2nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are lognormal}
         \label{fig:logi_2w}
     \end{subfigure}
@@ -618,14 +672,14 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
     
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/wprop_type1case3nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/wprop_type1case3nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are $T_3$}
         \label{fig:logi_3w}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/wprop_type1case4nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/wprop_type1case4nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are exponential}
         \label{fig:logi_4w}
     \end{subfigure}
@@ -641,14 +695,14 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/type2case1nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/type2case1nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are uniform}
         \label{fig:poi_1}
     \end{subfigure}
     \hfill  
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/type2case2nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/type2case2nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are Beta}
         \label{fig:poi_2}
     \end{subfigure}
@@ -657,14 +711,14 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
     
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/type2case3nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/type2case3nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are normal}
         \label{fig:poi_3}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/type2case4nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/type2case4nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are exponential}
         \label{fig:poi_4}
     \end{subfigure}
@@ -679,14 +733,14 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/wprop_type2case1nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/wprop_type2case1nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are uniform}
         \label{fig:poi_1w}
     \end{subfigure}
     \hfill  
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/wprop_type2case2nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/wprop_type2case2nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are Beta}
         \label{fig:poi_2w}
     \end{subfigure}
@@ -695,14 +749,14 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
     
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/wprop_type2case3nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/wprop_type2case3nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are normal}
         \label{fig:poi_3w}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/wprop_type2case4nss2000.pdf}
+        \includegraphics[width=\textwidth]{figures/wprop_type2case4nss2000s5.pdf}
         \caption{$\x_{-1,i}$'s are exponential}
         \label{fig:poi_4w}
     \end{subfigure}
@@ -755,15 +809,15 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 
 % $\htheta_W$ and $\htheta_S$ are the solutions of  \eqref{psi_W} and \eqref{psi_S}, so we expense these two equations at the true value $\btheta_0$ and have
 % \begin{align}\label{eq:tay_psi}
-%     0 &= \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_W (\btheta_0; \x_i, y_i, \delta_i) + \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_0; \x_i, y_i, \delta_i) \right] \sqrt{N} (\htheta_W - \btheta_0) + \op, \\
-%     0 &= \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_S (\btheta_0; \x_i, y_i, \delta_i) + \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_0; \x_i, y_i, \delta_i) \right] \sqrt{N} (\htheta_S - \btheta_0) + \op. 
+%     0 &= \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \dl_W (\btheta_0; \x_i, y_i, \delta_i) + \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \dl_W (\btheta_0; \x_i, y_i, \delta_i) \right] \sqrt{N} (\htheta_W - \btheta_0) + \op, \\
+%     0 &= \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \dl_S (\btheta_0; \x_i, y_i, \delta_i) + \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \dl_S (\btheta_0; \x_i, y_i, \delta_i) \right] \sqrt{N} (\htheta_S - \btheta_0) + \op. 
 % \end{align}
 
 
 % Since $\Exp[\delta \mid \x,y] = \pi(\x,y)$,
 % \begin{align}\label{B_WS}
 %     \notag
-%     B_{WS} &= \Exp_{(\x,y)} \left[ \psi_W (\btheta_0; \x, y, \delta) \psi_S (\btheta_0; \x, y, \delta)^\top \right] \\ \notag 
+%     B_{WS} &= \Exp_{(\x,y)} \left[ \dl_W (\btheta_0; \x, y, \delta) \dl_S (\btheta_0; \x, y, \delta)^\top \right] \\ \notag 
 %     &= \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \left( \nabla_{\btheta} \dl (y\mid \x,\btheta_0) - \nabla_{\btheta} \log \bapi(\x, y)  \right)^\top \right] \\ \notag
 %     &= \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \nabla_{\btheta} \dl (y\mid \x,\btheta_0)^\top \right] - \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \nabla_{\btheta} \log \bapi(\x, y)^\top \right] \\ \notag
 %     &= \Exp_{(\x,y)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \nabla_{\btheta} \dl (y\mid \x,\btheta_0)^\top \right] - \Exp_{(x)} \left[ \Exp_{(y \mid \x)} \left[ \nabla_{\btheta} \dl (y\mid \x,\btheta_0) \right] \nabla_{\btheta} \log \bapi(\x, y)^\top  \right] \\
@@ -773,7 +827,7 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 
 % Besides, with the Assumption 1(1) and (5), and Eq.~\eqref{B_WS}, we have
 % \begin{equation*}
-%     A_W = - \Exp [-\nabla_{\btheta} \psi_W (\btheta_0; \x, y, \delta)] = - \Exp_{(\x,y)} \left[\ddl_W (\btheta_0; \x, y, \delta) \right] = -B_{WS},
+%     A_W = - \Exp [-\nabla_{\btheta} \dl_W (\btheta_0; \x, y, \delta)] = - \Exp_{(\x,y)} \left[\ddl^w (\btheta_0; \x, y, \delta) \right] = -B_{WS},
 % \end{equation*} 
 % while
 % \begin{equation*}
@@ -782,14 +836,14 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % with the conclusion in \cite{wang2022maximum} (A.12) that $-\frac{1}{N} \ddl_S(\btheta_0; \x, y, \delta) = \Sigma_S + \op$.
 
 % Rearranging Eq.~\eqref{eq:tay_psi} and noting that 
-% $N^{-1}\sum_{i=1}^N \nabla_{\btheta}\psi_W(\btheta_0; ; \x_i, y_i, \delta_i) \cvp A_W$ with $A_W$ nonsingular (Assumption 1(5)), 
+% $N^{-1}\sum_{i=1}^N \nabla_{\btheta}\dl_W(\btheta_0; ; \x_i, y_i, \delta_i) \cvp A_W$ with $A_W$ nonsingular (Assumption 1(5)), 
 % an application of Slutsky's theorem yields
 % \begin{equation*}
-%     \lN \sqrt{N} (\htheta_W - \btheta_0) = - A_W^{-1} (\frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_W (\btheta_0; \x_i, y_i, \delta_i)) +\op,
+%     \lN \sqrt{N} (\htheta_W - \btheta_0) = - A_W^{-1} (\frac{1}{\sqrt{N}} \sum_{i=1}^{N} \dl_W (\btheta_0; \x_i, y_i, \delta_i)) +\op,
 % \end{equation*}
 % and 
 % \begin{equation*}
-%     \lN \sqrt{N} (\htheta_S - \btheta_0) = - A_S^{-1} (\frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_S (\btheta_0; \x_i, y_i, \delta_i)) +\op.
+%     \lN \sqrt{N} (\htheta_S - \btheta_0) = - A_S^{-1} (\frac{1}{\sqrt{N}} \sum_{i=1}^{N} \dl_S (\btheta_0; \x_i, y_i, \delta_i)) +\op.
 % \end{equation*}
 % Then
 % \begin{equation*}
@@ -840,13 +894,13 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 %     \begin{align}
 %         \sqrt{N}(\htheta_W - \btheta_l) \xrightarrow{d} \N(0, \Sigma_W^{-1}),
 %     \end{align}
-%     where $\Sigma_W^{-1} = A_W^{-1} B_W A_W^{-\top}$ with $B_W = \Exp[\psi_W(\btheta_l; \x, y,\delta) \psi_W(\btheta_l; \x, y,\delta)^\top]$, 
+%     where $\Sigma_W^{-1} = A_W^{-1} B_W A_W^{-\top}$ with $B_W = \Exp[\dl_W(\btheta_l; \x, y,\delta) \dl_W(\btheta_l; \x, y,\delta)^\top]$, 
 %     and
 %     \begin{align}
 %         \sqrt{N}(\htheta_S - \btheta_{ls}) \xrightarrow{d} \N(0,  \Sigma_{SM}^{-1}),
 %     \end{align}
-%     where $\Sigma_{SM}^{-1} = A_{SM}^{-1} B_{SM} A_{SM}^{-\top}$ with $B_{SM} = \Exp[\psi_{SM}(\btheta_{ls}; \x, y,\delta) \psi_{SM}(\btheta_{ls}; \x, y,\delta)^\top]$.
-%     Here, $A_W = \Exp[\nabla_{\btheta} \psi_W(\btheta_l; \x, y,\delta)]$, $A_{SM} = \Exp[\nabla_{\btheta} \psi_{SM}(\btheta_{ls}; \x, y,\delta)]$.
+%     where $\Sigma_{SM}^{-1} = A_{SM}^{-1} B_{SM} A_{SM}^{-\top}$ with $B_{SM} = \Exp[\dl_{SM}(\btheta_{ls}; \x, y,\delta) \dl_{SM}(\btheta_{ls}; \x, y,\delta)^\top]$.
+%     Here, $A_W = \Exp[\nabla_{\btheta} \dl_W(\btheta_l; \x, y,\delta)]$, $A_{SM} = \Exp[\nabla_{\btheta} \dl_{SM}(\btheta_{ls}; \x, y,\delta)]$.
 % \end{theorem}
 % As applied in the Theorem~1 by \citet{wang2022maximum}, the consistency and asymptotic normality of $\htheta_W$ and $\htheta_S$ follow from the Basic Corollary of \citet{hjort2011asymptotics}, which applies under possible model misspecification since the convex minimization framework does not require the model to be correctly specified.
 
@@ -854,10 +908,10 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % Under the model misspecification, the variance-correlation matrices should also be different and we tend to present the asymptotic order of estimation of variance-correlation matrices. 
 % %Another difference is that $\hV_H$ has the different structure and should be more complicated. 
 % %In this case, we use the influence function to calculation the $\hV_H$ and calculation of variance matrices are also derived.
-% We assume that $A_{\mathcal{T}} = \Exp [ \nabla_{\btheta} \psi_{\mathcal{T}} (\btheta_{\mathcal{T}}; \x, y, \delta)]$, where $\mathcal{T} = \{W, SM\}$ and $\btheta_{\mathcal{T}} = \{\btheta_l, \btheta_{ls}\}$.
+% We assume that $A_{\mathcal{T}} = \Exp [ \nabla_{\btheta} \dl_{\mathcal{T}} (\btheta_{\mathcal{T}}; \x, y, \delta)]$, where $\mathcal{T} = \{W, SM\}$ and $\btheta_{\mathcal{T}} = \{\btheta_l, \btheta_{ls}\}$.
 % Let 
 % \begin{equation*}
-%     \hat{A}_{\mathcal{T}} = \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_{\mathcal{T}} (\htheta_{\mathcal{T}}; \x_i, y_i, \delta_i),
+%     \hat{A}_{\mathcal{T}} = \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \dl_{\mathcal{T}} (\htheta_{\mathcal{T}}; \x_i, y_i, \delta_i),
 % \end{equation*}
 % we first prove the following lemma.
 % \begin{lemma}\label{asym_AW}
@@ -865,21 +919,21 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % \end{lemma}
 
 % \begin{proof}
-%     Let $\bar{A}_{\mathcal{T}}(\btheta) = \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_{\mathcal{T}} (\btheta; \x_i, y_i, \delta_i)$, then $\hat{A}_{\mathcal{T}} = \bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}})$.
+%     Let $\bar{A}_{\mathcal{T}}(\btheta) = \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \dl_{\mathcal{T}} (\btheta; \x_i, y_i, \delta_i)$, then $\hat{A}_{\mathcal{T}} = \bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}})$.
 %     We have 
 %     \begin{equation*}
 %         \hat{A}_{\mathcal{T}} - A_{\mathcal{T}} = [\bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}}) - \bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}})] + [\bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}}) - A_{\mathcal{T}}].
 %     \end{equation*}
 %     With the Assumption 1(1), we prove that $\bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}}) \cvp A_{\mathcal{T}}$ via the law of large numbers. Next, we show that $\|\bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}}) - \bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}})\| \cvp 0$.
-%     To this end, we apply a Taylor expansion to each component of the derivative matrix  $\nabla_{\btheta} \psi_{\mathcal{T}} (\htheta_{\mathcal{T}}; \x_i, y_i, \delta_i)$ around $\btheta_{\mathcal{T}}$. Then for each component, we obtain
+%     To this end, we apply a Taylor expansion to each component of the derivative matrix  $\nabla_{\btheta} \dl_{\mathcal{T}} (\htheta_{\mathcal{T}}; \x_i, y_i, \delta_i)$ around $\btheta_{\mathcal{T}}$. Then for each component, we obtain
 %     \begin{equation*}
-%         [\nabla_{\btheta} \psi_{\mathcal{T}} (\htheta_{\mathcal{T}}; \x_i, y_i, \delta_i)]_{j,k} = [\nabla_{\btheta} \psi_{\mathcal{T}} (\btheta_{\mathcal{T}}; \x_i, y_i, \delta_i)]_{j,k} + [\nabla_{\btheta}^2 \psi_{\mathcal{T}} (\tilde{\btheta}_i; \x_i, y_i, \delta_i)]_{j,k} (\htheta_{\mathcal{T}} - \btheta_{\mathcal{T}}),
+%         [\nabla_{\btheta} \dl_{\mathcal{T}} (\htheta_{\mathcal{T}}; \x_i, y_i, \delta_i)]_{j,k} = [\nabla_{\btheta} \dl_{\mathcal{T}} (\btheta_{\mathcal{T}}; \x_i, y_i, \delta_i)]_{j,k} + [\nabla_{\btheta}^2 \dl_{\mathcal{T}} (\tilde{\btheta}_i; \x_i, y_i, \delta_i)]_{j,k} (\htheta_{\mathcal{T}} - \btheta_{\mathcal{T}}),
 %     \end{equation*}
 %     where $\tilde{\btheta}_i$ lies on the segment between 
 %     $\htheta_{\mathcal{T}}$ and $\btheta_{\mathcal{T}}$
 %     Thus,
 %     \begin{align*}
-%         \|\bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}}) - \bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}})\| &\leq \|\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta}^2 \psi_{\mathcal{T}} (\tilde{\btheta}_i; \x_i, y_i, \delta_i)\| \|\htheta_{\mathcal{T}} - \btheta_{\mathcal{T}}\| \notag \\
+%         \|\bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}}) - \bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}})\| &\leq \|\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta}^2 \dl_{\mathcal{T}} (\tilde{\btheta}_i; \x_i, y_i, \delta_i)\| \|\htheta_{\mathcal{T}} - \btheta_{\mathcal{T}}\| \notag \\
 %         \leq \frac{1}{N} \sum_{i=1}^{N} B(\x_i, y_i) \|\htheta_{\mathcal{T}} - \btheta_{\mathcal{T}}\|.
 %     \end{align*}
 %     With the Assumption 1(2), we have $\frac{1}{N} \sum_{i=1}^{N} B(\x_i, y_i) \cvp \Exp[B(\x_i, y_i)] < \infty$ and $\|\htheta_{\mathcal{T}} - \btheta_{\mathcal{T}}\| = \op$. Then, we can prove that $\|\bar{A}_{\mathcal{T}}(\htheta_{\mathcal{T}}) - \bar{A}_{\mathcal{T}}(\btheta_{\mathcal{T}})\| \cvp 0$.
@@ -887,21 +941,21 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % \end{proof}
 % % According to the Assumpution 1(1), , with the large law of number, we have 
 % % \begin{equation*}
-% %     \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_W (\btheta_{\mathcal{T}}; \x_i, y_i, \delta_i) \cvp A_W,
+% %     \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \dl_W (\btheta_{\mathcal{T}}; \x_i, y_i, \delta_i) \cvp A_W,
 % % \end{equation*}
 % % and 
 % % \begin{equation*}
-% %     \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_S (\btheta_{\mathcal{T}}; \x_i, y_i, \delta_i) \cvp A_S.
+% %     \frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \dl_S (\btheta_{\mathcal{T}}; \x_i, y_i, \delta_i) \cvp A_S.
 % % \end{equation*}
 % Besides,
 % we assume that
 % \begin{equation*}
-%     \hat{B}_{\mathcal{T}_1 \mathcal{T}_2} = \hat{B}_{\mathcal{T}_1 \mathcal{T}_2}\left [\frac{1}{N} \sum_{i=1}^{N} \psi_{\mathcal{T}_1} (\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \right] \left[\frac{1}{N} \sum_{i=1}^{N} \psi_{\mathcal{T}_2} (\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i) \right]^\top,
+%     \hat{B}_{\mathcal{T}_1 \mathcal{T}_2} = \hat{B}_{\mathcal{T}_1 \mathcal{T}_2}\left [\frac{1}{N} \sum_{i=1}^{N} \dl_{\mathcal{T}_1} (\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \right] \left[\frac{1}{N} \sum_{i=1}^{N} \dl_{\mathcal{T}_2} (\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i) \right]^\top,
 % \end{equation*}
 % where $\mathcal{T}_1, \mathcal{T}_2$ can choose from the index set $W, SM$,
 % and 
 % \begin{equation*}
-%     B_{\mathcal{T}_1 \mathcal{T}_2} = \Exp [\psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x, y, \delta) \psi_{\mathcal{T}_2} (\btheta_{\mathcal{T}_2}; \x, y, \delta)^\top].
+%     B_{\mathcal{T}_1 \mathcal{T}_2} = \Exp [\dl_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x, y, \delta) \dl_{\mathcal{T}_2} (\btheta_{\mathcal{T}_2}; \x, y, \delta)^\top].
 % \end{equation*}
 % We denote that $B_{\mathcal{T}_1 \mathcal{T}_1} = B_{\mathcal{T}_1}$ and $B_{\mathcal{T}_2 \mathcal{T}_1} = B_{\mathcal{T}_2}$ for simplify.
 % Then we have
@@ -910,41 +964,41 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % \end{lemma}
 
 % \begin{proof}
-%     The proof idea is similar with the former one. We also set a middle item $\bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\htheta_1, \htheta_2) $ $= \frac{1}{N} \sum_{i=1}^{N} \psi_{\mathcal{T}_1}(\htheta_1; \x_i, y_i, \delta_i) \psi_{\mathcal{T}_2} (\htheta_2; \x_i, y_i, \delta_i)^\top$.
+%     The proof idea is similar with the former one. We also set a middle item $\bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\htheta_1, \htheta_2) $ $= \frac{1}{N} \sum_{i=1}^{N} \dl_{\mathcal{T}_1}(\htheta_1; \x_i, y_i, \delta_i) \dl_{\mathcal{T}_2} (\htheta_2; \x_i, y_i, \delta_i)^\top$.
 %     So we can divide the difference of $\hat{B}_{\mathcal{T}_1 \mathcal{T}_2}$ and $B_{\mathcal{T}_1 \mathcal{T}_2}$ into two items,
 %     \begin{equation*}
 %         \hat{B}_{\mathcal{T}_1 \mathcal{T}_2} - B_{\mathcal{T}_1 \mathcal{T}_2} = [\bar{B}_{\mathcal{T}_1 \mathcal{T}_2} (\btheta_{\mathcal{T}_1}, \btheta_{\mathcal{T}_2}) - \bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\btheta_{\mathcal{T}_1}, \btheta_{\mathcal{T}_2})] + [\bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\btheta_{\mathcal{T}_1}, \btheta_{\mathcal{T}_2}) - B_{\mathcal{T}_1 \mathcal{T}_2}].
 %     \end{equation*}
 
-%     Since $\psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top$ is i.i.d random matrix, then with the Cauchy-Schwarz inequation and Assumption A(1) that $\Exp \|\psi_{\mathcal{T}} (\btheta_{\mathcal{T}}; \x, y, \delta)\|^4 < \infty$,
+%     Since $\dl_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \dl_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top$ is i.i.d random matrix, then with the Cauchy-Schwarz inequation and Assumption A(1) that $\Exp \|\dl_{\mathcal{T}} (\btheta_{\mathcal{T}}; \x, y, \delta)\|^4 < \infty$,
 %     we can prove that $\bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\btheta_{\mathcal{T}_1}, \btheta_{\mathcal{T}_2}) \cvp B_{\mathcal{T}_1 \mathcal{T}_2}$ with the large number of law. 
 
 %     For the second part, we also divide the derivative matrix $\bar{B}_{\mathcal{T}_1 \mathcal{T}_2}(\htheta_1, \htheta_2)$ into three parts and prove that these three parts convergences to $0$ respectively.
 %     \begin{align*}
-%         & \psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \psi_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top -  \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top \notag \\
-%         &= [\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)] \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top \notag \\
-%         &+ \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) [\psi_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top] \notag \\
-%         &+ [\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)] [\psi_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top] .
+%         & \dl_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \dl_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top -  \dl_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) \dl_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top \notag \\
+%         &= [\dl_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \dl_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)] \dl_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top \notag \\
+%         &+ \dl_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) [\dl_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \dl_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top] \notag \\
+%         &+ [\dl_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \dl_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)] [\dl_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \dl_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top] .
 %     \end{align*}
 
 %     For the first part, according to the Assumption 1(1) and (2),
 %     \begin{equation*}
-%         \|\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)\| \leq \|B(\x, y)\| \|\htheta_{\mathcal{T}_1} - \btheta_{\mathcal{T}_1}\|.
+%         \|\dl_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \dl_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)\| \leq \|B(\x, y)\| \|\htheta_{\mathcal{T}_1} - \btheta_{\mathcal{T}_1}\|.
 %     \end{equation*}
 %     Thus, 
 %     \begin{align*}
-%         & \|\frac{1}{N} \sum_{i=1}^{N} [\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}({\mathcal{T}_1}; \x_i, y_i, \delta_i)] \psi_{\mathcal{T}_2}({\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top\| \notag \\
-%         &\leq \frac{1}{N} \sum_{i=1}^{N} \|\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}({\mathcal{T}_1}; \x_i, y_i, \delta_i)\| \cdot \|\psi_{\mathcal{T}_2}({\mathcal{T}_2}; \x_i, y_i, \delta_i)\| \notag \\
-%         &\leq \|\htheta_{\mathcal{T}_1} - \btheta_{\mathcal{T}_1}\| \cdot \|B(\x, y)\| \frac{1}{N} \sum_{i=1}^{N} \|\psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)\|.
+%         & \|\frac{1}{N} \sum_{i=1}^{N} [\dl_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \dl_{\mathcal{T}_1}({\mathcal{T}_1}; \x_i, y_i, \delta_i)] \dl_{\mathcal{T}_2}({\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top\| \notag \\
+%         &\leq \frac{1}{N} \sum_{i=1}^{N} \|\dl_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \dl_{\mathcal{T}_1}({\mathcal{T}_1}; \x_i, y_i, \delta_i)\| \cdot \|\dl_{\mathcal{T}_2}({\mathcal{T}_2}; \x_i, y_i, \delta_i)\| \notag \\
+%         &\leq \|\htheta_{\mathcal{T}_1} - \btheta_{\mathcal{T}_1}\| \cdot \|B(\x, y)\| \frac{1}{N} \sum_{i=1}^{N} \|\dl_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)\|.
 %     \end{align*}
-%     According to Assumption 1(1), $\frac{1}{N} \sum_{i=1}^{N} \|\psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)\| \cvp \Exp[\|\psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x, y, \delta)\|] < \infty$.
+%     According to Assumption 1(1), $\frac{1}{N} \sum_{i=1}^{N} \|\dl_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)\| \cvp \Exp[\|\dl_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x, y, \delta)\|] < \infty$.
 %     Besides, we also have $\|B(\x, y)\|$ is bounded through the Assumption A(2) and $\|\htheta_{\mathcal{T}}-\btheta_{\mathcal{T}}\| = \op$, which complete the proof that the first part converges to $0$. 
 %     Similarly, we can also prove that the second part also converges to $0$.
 
 %     For the third part, 
 %     \begin{align*}
-%         & \|\frac{1}{N} \sum_{i=1}^{N} [\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)] [\psi_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top]\| \notag \\
-%         &\leq \frac{1}{N} \sum_{i=1}^{N} \|\psi_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \psi_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)\| \cdot \|\psi_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \psi_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top\| \notag \\
+%         & \|\frac{1}{N} \sum_{i=1}^{N} [\dl_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \dl_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)] [\dl_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \dl_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top]\| \notag \\
+%         &\leq \frac{1}{N} \sum_{i=1}^{N} \|\dl_{\mathcal{T}_1}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i) - \dl_{\mathcal{T}_1}(\btheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)\| \cdot \|\dl_{\mathcal{T}_2}(\htheta_{\mathcal{T}_1}; \x_i, y_i, \delta_i)^\top - \dl_{\mathcal{T}_2}(\btheta_{\mathcal{T}_2}; \x_i, y_i, \delta_i)^\top\| \notag \\
 %         &\leq \|\htheta_{\mathcal{T}_1} - \btheta_{\mathcal{T}_1}\| \cdot \|\htheta_{\mathcal{T}_2} - \btheta_{\mathcal{T}_2}\| \frac{1}{N} \sum_{i=1}^{N} B^2(\x, y) \notag \\
 %         & \sim \op \op \Op =\op.
 %     \end{align*}
@@ -966,11 +1020,11 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % % We expand the Taylor expression of the score function of 
 % % MSCLE, resulting in that 
 % % \begin{equation*}
-% %        0 = \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) + \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) \right] \sqrt{N} (\htheta_S - \btheta_{ls}) + R_N,  
+% %        0 = \frac{1}{\sqrt{N}} \sum_{i=1}^{N} \dl_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) + \left[\frac{1}{N} \sum_{i=1}^{N} \nabla_{\btheta} \dl_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) \right] \sqrt{N} (\htheta_S - \btheta_{ls}) + R_N,  
 % % \end{equation*}
 % % where 
 % % \begin{equation*}
-% %     R_N = \frac{1}{2} \sqrt{N} (\htheta_S - \btheta_{ls}) \left[\frac{1}{N} \sum_{i=1}^{N} \nabla^2_{\btheta} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) \right] (\htheta_S - \btheta_{ls})^\top + \op.
+% %     R_N = \frac{1}{2} \sqrt{N} (\htheta_S - \btheta_{ls}) \left[\frac{1}{N} \sum_{i=1}^{N} \nabla^2_{\btheta} \dl_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) \right] (\htheta_S - \btheta_{ls})^\top + \op.
 % % \end{equation*}
 % % With the Assumption 1(2), we can prove that 
 % % \begin{equation*}
@@ -978,7 +1032,7 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % % \end{equation*}
 % % Also we have
 % % \begin{align}
-% %     B_{SM} = \Var (\psi_{SM} (\btheta; \x, y, \delta)^ {\otimes 2}) = \Exp^t [\delta (\dl(y \mid \x,\btheta) -  E^w\{ \dl(y \mid \x,\btheta) \mid \x, y, \delta \})^{\otimes 2} ],
+% %     B_{SM} = \Var (\dl_{SM} (\btheta; \x, y, \delta)^ {\otimes 2}) = \Exp [\delta (\dl(y \mid \x,\btheta) -  E^w\{ \dl(y \mid \x,\btheta) \mid \x, y, \delta \})^{\otimes 2} ],
 % % \end{align}
 % % where $A ^{\otimes 2} =AA^\top$.
 % % Then with the Assumption 2(1), let $A_{SM}^{-1} B_{SM} A_{SM}^{-1} = \Sigma_{SM}^{-1}$
@@ -989,7 +1043,7 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % % \begin{equation*}
 % %     \sqrt{N} (\htheta_W - \btheta_l)  \xrightarrow{d} N(0, \Sigma_W^{-1}),
 % % \end{equation*}
-% % where $\Sigma_W^{-1} = A_{W}^{-1} B_{W} A_{W}^{-1} = \Exp^t[\dl ^{\otimes 2} (\btheta;,\x,y)] ^{-1} \Exp\left\{ \frac{\dl ^{\otimes 2} (\btheta;,\x,y)}{\pi(\x,y)}\right\} \Exp^t[\dl ^{\otimes 2} (\btheta;,\x,y)]^{-1}$ and
+% % where $\Sigma_W^{-1} = A_{W}^{-1} B_{W} A_{W}^{-1} = \Exp[\dl ^{\otimes 2} (\btheta;,\x,y)] ^{-1} \Exp\left\{ \frac{\dl ^{\otimes 2} (\btheta;,\x,y)}{\pi(\x,y)}\right\} \Exp[\dl ^{\otimes 2} (\btheta;,\x,y)]^{-1}$ and
 % % $B_{W} = \Exp[\frac{\dl^{\otimes 2} (\btheta; \x, y)}{\pi(\x, y)}]$.
 
 % \begin{remark}
@@ -1079,7 +1133,7 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % The joint convergence
 % \begin{equation*}
 %     (Z_{W,N},  D_N) \xrightarrow{d} (Z_W,  D) 
-%     \sim \mathcal{N} \left(
+%     \sim \N \left(
 %     \binom{0}{\delta_s},
 %     \begin{pmatrix} 
 %     \Sigma_W^{-1} & C_{WD} \\ C_{WD} & V_H 
@@ -1454,15 +1508,15 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % \end{equation*}
 % % and 
 % % \begin{equation*}
-% %     (\htheta_S - \btheta_{ls}) = -\A_{SM}^{-1} \left( \frac{1}{N} \sum_{i=1}^{N} \psi_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) +\op \right),
+% %     (\htheta_S - \btheta_{ls}) = -\A_{SM}^{-1} \left( \frac{1}{N} \sum_{i=1}^{N} \dl_{SM} (\btheta_{ls}; \x_i, y_i, \delta_i) +\op \right),
 % % \end{equation*}
-% % where the Hessian matrix of IPW $\M_W = \Exp^t[ \frac{\delta}{\pi(\x,y)} \ddot{\ell}(\btheta_l; \x,y) ]$ and the Hessian matrix of MSCLE $\M_S$ is approximated through 
+% % where the Hessian matrix of IPW $\M_W = \Exp[ \frac{\delta}{\pi(\x,y)} \ddot{\ell}(\btheta_l; \x,y) ]$ and the Hessian matrix of MSCLE $\M_S$ is approximated through 
 % %  \begin{align}
 % %     M_{S,N} = \frac{1}{N} \sum_{i=1}^{N} \delta \{ \ddot{\ell}^w(\btheta_l; \x_i,y_i) - \Exp^w(\ddot{\ell}(\btheta_l; \x_i,y_i) \mid \x_i, \delta=1) - \Var^w(\dl (\btheta_l; \x_i,y_i) \mid \x_i, \delta=1)\} .
 % % \end{align}
 % % Under the Assumption 2 and the strong law of large numbers, we have $M_{S,N} \xrightarrow{a.s} \M_S$ where
 % % \begin{align}
-% %     \M_S = \Exp^t [ \delta \{ \ddot{\ell}^w(\btheta_l; \x,y) - \Exp^w(\ddot{\ell}(\btheta_l; \x,y) \mid \x, \delta=1) - \Var^w(\dl (\btheta_l; \x,y) \mid \x, \delta=1)\} ].
+% %     \M_S = \Exp [ \delta \{ \ddot{\ell}^w(\btheta_l; \x,y) - \Exp^w(\ddot{\ell}(\btheta_l; \x,y) \mid \x, \delta=1) - \Var^w(\dl (\btheta_l; \x,y) \mid \x, \delta=1)\} ].
 % % \end{align}
 
 % % We also have to make the assumption that the limiting matrix $\M_S$ is non-singular and positive definite.
@@ -1472,22 +1526,22 @@ This phenomenon suggests that assigning a larger weight to MSCLE does not necess
 % % \end{align}
 % % where the variance-correlation matrix under the model misspecification is 
 % % \begin{align}
-% %     \Sigma_{WM}^{-1} = \Exp^t[\dl ^{\otimes 2} (\btheta;,\x,y)] ^{-1} \Exp\left\{ \frac{\dl ^{\otimes 2} (\btheta;,\x,y)}{\pi(\x,y)}\right\} \Exp^t[\dl ^{\otimes 2} (\btheta;,\x,y)]^{-1}.
+% %     \Sigma_{WM}^{-1} = \Exp[\dl ^{\otimes 2} (\btheta;,\x,y)] ^{-1} \Exp\left\{ \frac{\dl ^{\otimes 2} (\btheta;,\x,y)}{\pi(\x,y)}\right\} \Exp[\dl ^{\otimes 2} (\btheta;,\x,y)]^{-1}.
 % % \end{align}
 
 % % where 
 % % \begin{equation*}
-% %     \dl_S (\btheta_{ls};,\x,y) = \delta [\dl^w (\btheta_{ls};\x,y) - \Exp^w\{ \dl^w (\btheta_{ls};\x,y) \mid \x, \delta=1 \}].
+% %     \dl_S (\btheta_{ls};,\x,y) = \delta [\dl_W (\btheta_{ls};\x,y) - \Exp^w\{ \dl_W (\btheta_{ls};\x,y) \mid \x, \delta=1 \}].
 % % \end{equation*}
 % % Then the $\Cov(\htheta_W-\btheta_l, \htheta_S-\btheta_{ls})$ can be transformed to 
 % % \begin{align}
-% %     C_{WS} = \M_W^{-1} \Exp[ \psi_{W,i} \psi_{S,i}^\top] \M_S^{-\top} &= \M_W^{-1} \Exp[ \dl_W (\btheta_{l};,\x,y) \dl_S (\btheta_{ls};,\x,y) ^\top] \M_S^{-\top}
+% %     C_{WS} = \M_W^{-1} \Exp[ \dl_{W,i} \dl_{S,i}^\top] \M_S^{-\top} &= \M_W^{-1} \Exp[ \dl_W (\btheta_{l};,\x,y) \dl_S (\btheta_{ls};,\x,y) ^\top] \M_S^{-\top}
 % % \end{align}
 % % where 
 % % \begin{equation*}
-% %     \dl_W (\btheta_{l};,\x,y) \dl_S (\btheta_{ls};,\x,y) ^\top = \dl^w (\btheta_{l};\x,y) \cdot [\dl^w (\btheta_{ls};\x,y) - \Exp^w\{ \dl^w (\btheta_{ls};\x,y) \mid \x, \delta=1 \}]^\top
+% %     \dl_W (\btheta_{l};,\x,y) \dl_S (\btheta_{ls};,\x,y) ^\top = \dl_W (\btheta_{l};\x,y) \cdot [\dl_W (\btheta_{ls};\x,y) - \Exp^w\{ \dl_W (\btheta_{ls};\x,y) \mid \x, \delta=1 \}]^\top
 % % \end{equation*}
-% % and we denote that $\psi_{W,i} = \psi_W (\btheta_l; \x_i, y_i, \delta_i)$ and $\psi_{S,i} = \psi_S (\btheta_{ls}; \x_i, y_i, \delta_i)$ are the score functions of IPW and MSCLE for simplify.
+% % and we denote that $\dl_{W,i} = \dl_W (\btheta_l; \x_i, y_i, \delta_i)$ and $\dl_{S,i} = \dl_S (\btheta_{ls}; \x_i, y_i, \delta_i)$ are the score functions of IPW and MSCLE for simplify.
 % % The formulation of $\Cov(\htheta_S-\btheta_{ls}, \htheta_W-\btheta_l)$ has the similar result. 
 
 % % As a result, we have 
